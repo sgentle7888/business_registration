@@ -1,0 +1,408 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "creation": "2025-01-25 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "business_information_section",
+    "business_name",
+    "cac_number",
+    "premises_licence_number",
+    "column_break_4",
+    "annual_turnover",
+    "business_type",
+    "date_of_incorporation",
+    "address_section",
+    "address_line1",
+    "address_line2",
+    "address_line3",
+    "column_break_8",
+    "town_or_city",
+    "local_government",
+    "state",
+    "column_break_12",
+    "postal_code",
+    "country",
+    "contact_information_section",
+    "contact_person",
+    "contact_phone_number",
+    "contact_email",
+    "column_break_16",
+    "alternative_phone",
+    "website",
+    "representative_section",
+    "representative_full_name",
+    "representative_contact_email",
+    "representative_contact_phone",
+    "column_break_20",
+    "representative_designation",
+    "representative_address",
+    "business_references_section",
+    "details_of_business_references",
+    "branch_outlets_section",
+    "branch_outlets",
+    "attachments_section",
+    "business_registration_details",
+    "proof_of_address",
+    "column_break_24",
+    "additional_documents",
+    "workflow_section",
+    "application_status",
+    "submission_date",
+    "review_date",
+    "column_break_28",
+    "reviewed_by",
+    "approval_date",
+    "rejection_reason",
+    "section_break_32",
+    "internal_notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "business_information_section",
+      "fieldtype": "Section Break",
+      "label": "Business Information"
+    },
+    {
+      "fieldname": "business_name",
+      "fieldtype": "Data",
+      "label": "Business Name",
+      "reqd": 1
+    },
+    {
+      "fieldname": "cac_number",
+      "fieldtype": "Data",
+      "label": "CAC Number",
+      "reqd": 1
+    },
+    {
+      "fieldname": "premises_licence_number",
+      "fieldtype": "Data",
+      "label": "Premises Licence Number"
+    },
+    {
+      "fieldname": "column_break_4",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "annual_turnover",
+      "fieldtype": "Currency",
+      "label": "Annual Turnover",
+      "reqd": 1
+    },
+    {
+      "fieldname": "business_type",
+      "fieldtype": "Select",
+      "label": "Business Type",
+      "options": "Limited Liability Company\nPublic Limited Company\nPartnership\nSole Proprietorship\nNon-Profit Organization\nOthers"
+    },
+    {
+      "fieldname": "date_of_incorporation",
+      "fieldtype": "Date",
+      "label": "Date of Incorporation"
+    },
+    {
+      "fieldname": "address_section",
+      "fieldtype": "Section Break",
+      "label": "Business Address"
+    },
+    {
+      "fieldname": "address_line1",
+      "fieldtype": "Data",
+      "label": "Address Line 1",
+      "reqd": 1
+    },
+    {
+      "fieldname": "address_line2",
+      "fieldtype": "Data",
+      "label": "Address Line 2"
+    },
+    {
+      "fieldname": "address_line3",
+      "fieldtype": "Data",
+      "label": "Address Line 3"
+    },
+    {
+      "fieldname": "column_break_8",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "town_or_city",
+      "fieldtype": "Data",
+      "label": "Town or City",
+      "reqd": 1
+    },
+    {
+      "fieldname": "local_government",
+      "fieldtype": "Data",
+      "label": "Local Government"
+    },
+    {
+      "fieldname": "state",
+      "fieldtype": "Data",
+      "label": "State",
+      "reqd": 1
+    },
+    {
+      "fieldname": "column_break_12",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "postal_code",
+      "fieldtype": "Data",
+      "label": "Postal Code"
+    },
+    {
+      "fieldname": "country",
+      "fieldtype": "Data",
+      "label": "Country",
+      "default": "Nigeria"
+    },
+    {
+      "fieldname": "contact_information_section",
+      "fieldtype": "Section Break",
+      "label": "Contact Information"
+    },
+    {
+      "fieldname": "contact_person",
+      "fieldtype": "Data",
+      "label": "Contact Person",
+      "reqd": 1
+    },
+    {
+      "fieldname": "contact_phone_number",
+      "fieldtype": "Phone",
+      "label": "Contact Phone Number",
+      "reqd": 1
+    },
+    {
+      "fieldname": "contact_email",
+      "fieldtype": "Data",
+      "label": "Contact Email",
+      "options": "Email",
+      "reqd": 1
+    },
+    {
+      "fieldname": "column_break_16",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "alternative_phone",
+      "fieldtype": "Phone",
+      "label": "Alternative Phone"
+    },
+    {
+      "fieldname": "website",
+      "fieldtype": "Data",
+      "label": "Website",
+      "options": "URL"
+    },
+    {
+      "fieldname": "representative_section",
+      "fieldtype": "Section Break",
+      "label": "Authorized Representative"
+    },
+    {
+      "fieldname": "representative_full_name",
+      "fieldtype": "Data",
+      "label": "Representative Full Name",
+      "reqd": 1
+    },
+    {
+      "fieldname": "representative_contact_email",
+      "fieldtype": "Data",
+      "label": "Representative Contact Email",
+      "options": "Email",
+      "reqd": 1
+    },
+    {
+      "fieldname": "representative_contact_phone",
+      "fieldtype": "Phone",
+      "label": "Representative Contact Phone",
+      "reqd": 1
+    },
+    {
+      "fieldname": "column_break_20",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "representative_designation",
+      "fieldtype": "Data",
+      "label": "Representative Designation"
+    },
+    {
+      "fieldname": "representative_address",
+      "fieldtype": "Small Text",
+      "label": "Representative Address"
+    },
+    {
+      "fieldname": "business_references_section",
+      "fieldtype": "Section Break",
+      "label": "Business References"
+    },
+    {
+      "fieldname": "details_of_business_references",
+      "fieldtype": "Text Editor",
+      "label": "Details of Business References",
+      "description": "Provide details of at least 2 business references including company names, contact persons, phone numbers, and email addresses"
+    },
+    {
+      "fieldname": "branch_outlets_section",
+      "fieldtype": "Section Break",
+      "label": "Branch/Outlets Information"
+    },
+    {
+      "fieldname": "branch_outlets",
+      "fieldtype": "Table",
+      "label": "Branch/Outlets",
+      "options": "Business Branch"
+    },
+    {
+      "fieldname": "attachments_section",
+      "fieldtype": "Section Break",
+      "label": "Required Documents"
+    },
+    {
+      "fieldname": "business_registration_details",
+      "fieldtype": "Attach",
+      "label": "Business Registration Details",
+      "reqd": 1,
+      "description": "Upload CAC certificate or business registration documents"
+    },
+    {
+      "fieldname": "proof_of_address",
+      "fieldtype": "Attach",
+      "label": "Proof of Address",
+      "reqd": 1,
+      "description": "Upload utility bill, lease agreement, or other proof of business address"
+    },
+    {
+      "fieldname": "column_break_24",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "additional_documents",
+      "fieldtype": "Attach",
+      "label": "Additional Documents",
+      "description": "Upload any additional supporting documents"
+    },
+    {
+      "fieldname": "workflow_section",
+      "fieldtype": "Section Break",
+      "label": "Application Status",
+      "collapsible": 1
+    },
+    {
+      "fieldname": "application_status",
+      "fieldtype": "Select",
+      "label": "Application Status",
+      "options": "Draft\nSubmitted\nUnder Review\nApproved\nRejected",
+      "default": "Draft",
+      "read_only": 1
+    },
+    {
+      "fieldname": "submission_date",
+      "fieldtype": "Datetime",
+      "label": "Submission Date",
+      "read_only": 1
+    },
+    {
+      "fieldname": "review_date",
+      "fieldtype": "Datetime",
+      "label": "Review Date",
+      "read_only": 1
+    },
+    {
+      "fieldname": "column_break_28",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "reviewed_by",
+      "fieldtype": "Link",
+      "label": "Reviewed By",
+      "options": "User",
+      "read_only": 1
+    },
+    {
+      "fieldname": "approval_date",
+      "fieldtype": "Datetime",
+      "label": "Approval Date",
+      "read_only": 1
+    },
+    {
+      "fieldname": "rejection_reason",
+      "fieldtype": "Small Text",
+      "label": "Rejection Reason",
+      "depends_on": "eval:doc.application_status=='Rejected'"
+    },
+    {
+      "fieldname": "section_break_32",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "internal_notes",
+      "fieldtype": "Text Editor",
+      "label": "Internal Notes",
+      "description": "Internal notes for reviewers (not visible to applicants)"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "is_submittable": 1,
+  "links": [],
+  "modified": "2025-01-25 00:00:00.000000",
+  "module": "Business Registration",
+  "name": "Business Registration",
+  "naming_rule": "By fieldname",
+  "naming_series_field": "business_name",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "submit": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Form Reviewer",
+      "share": 1,
+      "submit": 1,
+      "write": 1
+    },
+    {
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Business Registration User",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "read": 1,
+      "role": "Guest",
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1,
+  "track_seen": 1
+}

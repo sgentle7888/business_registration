@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Business Registration - {{ doc.business_name }}</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #1e40af;
+            font-size: 24px;
+            margin: 0 0 10px 0;
+            font-weight: bold;
+        }
+        
+        .header .subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+        
+        .section-title {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 14px;
+            border-left: 4px solid #2563eb;
+            margin-bottom: 15px;
+        }
+        
+        .field-group {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .field {
+            flex: 1;
+            min-width: 200px;
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .field-label {
+            font-weight: bold;
+            color: #374151;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+        
+        .field-value {
+            color: #1f2937;
+            font-size: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 3px;
+            min-height: 16px;
+        }
+        
+        .full-width {
+            flex: 1 1 100%;
+            margin-right: 0;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-draft { background-color: #fef3c7; color: #92400e; }
+        .status-submitted { background-color: #dbeafe; color: #1e40af; }
+        .status-under-review { background-color: #fde68a; color: #b45309; }
+        .status-approved { background-color: #d1fae5; color: #065f46; }
+        .status-rejected { background-color: #fee2e2; color: #991b1b; }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .table th {
+            background-color: #f9fafb;
+            color: #374151;
+            font-weight: bold;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 11px;
+            text-align: left;
+        }
+        
+        .table td {
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 11px;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 10px;
+        }
+        
+        .attachment-info {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 5px;
+            font-size: 10px;
+            color: #64748b;
+        }
+        
+        @media print {
+            body { margin: 0; }
+            .section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Business Registration Application</h1>
+        <p class="subtitle">Application ID: {{ doc.name }}</p>
+        <p class="subtitle">Generated on: {{ format_date(frappe.utils.nowdate()) }}</p>
+    </div>
+
+    <!-- Status Section -->
+    <div class="section">
+        <div class="section-title">Application Status</div>
+        <div class="field-group">
+            <div class="field">
+                <div class="field-label">Current Status</div>
+                <div class="field-value">
+                    <span class="status-badge status-{{ doc.application_status.lower().replace(' ', '-') }}">
+                        {{ doc.application_status }}
+                    </span>
+                </div>
+            </div>
+            {% if doc.submission_date %}
+            <div class="field">
+                <div class="field-label">Submission Date</div>
+                <div class="field-value">{{ format_date(doc.submission_date) }}</div>
+            </div>
+            {% endif %}
+            {% if doc.approval_date %}
+            <div class="field">
+                <div class="field-label">Approval Date</div>
+                <div class="field-value">{{ format_date(doc.approval_date) }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Business Information -->
+    <div class="section">
+        <div class="section-title">Business Information</div>
+        <div class="field-group">
+            <div class="field">
+                <div class="field-label">Business Name</div>
+                <div class="field-value">{{ doc.business_name or '' }}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Business Type</div>
+                <div class="field-value">{{ doc.business_type or '' }}</div>
+            </div>
+        </div>
+        <div class="field-group">
+            <div class="field">
+                <div class="field-label">CAC Number</div>
+                <div class="field-value">{{ doc.cac_number or '' }}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Premises Licence Number</div>
+                <div class="field-value">{{ doc.premises_licence_number or '' }}</div>
+            </div>
+        </div>
+        <div class="field-group">
+            <div class="field">
+                <div class="field-label">Date of Incorporation</div>
+                <div class="field-value">{{ format_date(doc.date_of_incorporation) if doc.date_of_incorporation else '' }}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Annual Turnover</div>
+                <div class="field-value">{{ format_currency(doc.annual_turnover) if doc.annual_turnover else '' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Address Information -->
+    <div class="section">
+        <div class="section-title">Address Information</div>
+        <div class="field-group">
+            <div class="field full-width">
+                <div class="field-label">Business Address</div>
+                <div class="field-value">{{ doc.business_address or '' }}</div>
+            </div>
+        </div>
+        <div class="field-group">
+            <div class="field">
+                <div class="field-label">City</div>
+                <div class="field-value">{{ doc.city or '' }}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">State</div>
+                <div class="field-value">{{ doc.state or '' }}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Postal Code</div>
+                <div class="field-value">{{ doc.postal_code or '' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="section">
+        <div class="section-title">Contact Information</div>
+        <div class="field-group">
+            <div class="field">
+                <div class="field-label">Contact Person</div>
+                <div class="field-value">{{ doc.contact_person or '' }}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Contact Phone</div>
+                <div class="field-value">{{ doc.contact_phone_number or '' }}</div>
+            </div>
+        </div>
+        <div class="field-group">
+            <div class="field">
+                <div class="field-label">Contact Email</div>
+                <div class="field-value">{{ doc.contact_email or '' }}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Alternative Phone</div>
+                <div class="field-value">{{ doc.alternative_phone or '' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Representative Information -->
+    <div class="section">
+        <div class="section-title">Representative Information</div>
+        <div class="field-group">
+            <div class="field">
+                <div class="field-label">Representative Full Name</div>
+                <div class="field-value">{{ doc.representative_full_name or '' }}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Representative Email</div>
+                <div class="field-value">{{ doc.representative_contact_email or '' }}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Representative Phone</div>
+                <div class="field-value">{{ doc.representative_contact_phone or '' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Business References -->
+    {% if doc.details_of_business_references %}
+    <div class="section">
+        <div class="section-title">Business References</div>
+        <div class="field-group">
+            <div class="field full-width">
+                <div class="field-label">Details of Business References</div>
+                <div class="field-value">{{ doc.details_of_business_references }}</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Branch/Outlets -->
+    {% if doc.branch_outlets %}
+    <div class="section">
+        <div class="section-title">Branch/Outlets</div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th>Branch Name</th>
+                    <th>Branch Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for branch in doc.branch_outlets %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ branch.branch_name or '' }}</td>
+                    <td>{{ branch.branch_address or '' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Document Attachments -->
+    <div class="section">
+        <div class="section-title">Document Attachments</div>
+        <div class="field-group">
+            <div class="field">
+                <div class="field-label">Business Registration Details</div>
+                <div class="field-value">
+                    {% if doc.business_registration_details %}
+                        <div class="attachment-info">✓ Document attached</div>
+                    {% else %}
+                        <div class="attachment-info">✗ No document attached</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="field">
+                <div class="field-label">Proof of Address</div>
+                <div class="field-value">
+                    {% if doc.proof_of_address %}
+                        <div class="attachment-info">✓ Document attached</div>
+                    {% else %}
+                        <div class="attachment-info">✗ No document attached</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Information -->
+    {% if doc.application_status in ['Under Review', 'Approved', 'Rejected'] %}
+    <div class="section">
+        <div class="section-title">Review Information</div>
+        <div class="field-group">
+            {% if doc.reviewed_by %}
+            <div class="field">
+                <div class="field-label">Reviewed By</div>
+                <div class="field-value">{{ get_fullname(doc.reviewed_by) }}</div>
+            </div>
+            {% endif %}
+            {% if doc.review_date %}
+            <div class="field">
+                <div class="field-label">Review Date</div>
+                <div class="field-value">{{ format_date(doc.review_date) }}</div>
+            </div>
+            {% endif %}
+        </div>
+        {% if doc.rejection_reason %}
+        <div class="field-group">
+            <div class="field full-width">
+                <div class="field-label">Rejection Reason</div>
+                <div class="field-value">{{ doc.rejection_reason }}</div>
+            </div>
+        </div>
+        {% endif %}
+        {% if doc.internal_notes %}
+        <div class="field-group">
+            <div class="field full-width">
+                <div class="field-label">Internal Notes</div>
+                <div class="field-value">{{ doc.internal_notes }}</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="footer">
+        <p>This document was generated electronically and is valid without signature.</p>
+        <p>Business Registration System - {{ frappe.utils.now() }}</p>
+    </div>
+</body>
+</html>
