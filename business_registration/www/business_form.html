@@ -1,0 +1,899 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block page_content %}
+<div class="business-form-container">
+    <div class="form-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1 class="form-title">
+                        <i class="fa fa-building"></i> Business Registration Application
+                    </h1>
+                    <p class="form-subtitle">Complete all required information to register your business</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-wrapper">
+            <div id="message-container" style="display: none; position: sticky; top: 10px; z-index: 1050;">
+                <div id="message-alert" class="alert shadow-sm" role="alert"></div>
+            </div>
+
+            <form id="business-registration-form" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+                <input type="hidden" name="cmd" value="business_registration.www.business_form.create_or_update_registration">
+                {% if business_registration.name %}
+                <input type="hidden" name="registration_id" value="{{ business_registration.name }}">
+                {% endif %}
+
+                <!-- Business Information Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h4><i class="fa fa-building"></i> Business Information</h4>
+                    </div>
+                    <div class="section-body">
+                        <div class="alert alert-info-soft">
+                            <i class="fa fa-info-circle"></i>
+                            Please provide accurate business information. All fields marked with * are required.
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="business_name">Business Name</label>
+                                    <input type="text" class="form-control" name="business_name" id="business_name" 
+                                           value="{{ business_registration.business_name or '' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="cac_number">CAC Number</label>
+                                    <input type="text" class="form-control" name="cac_number" id="cac_number" 
+                                           value="{{ business_registration.cac_number or '' }}" required
+                                           placeholder="e.g., RC123456, BN123456">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="business_type">Business Type</label>
+                                    <select class="form-control" name="business_type" id="business_type">
+                                        <option value="">Select Business Type</option>
+                                        {% for type in business_types %}
+                                        <option value="{{ type }}" {% if business_registration.business_type == type %}selected{% endif %}>{{ type }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="annual_turnover">Annual Turnover (₦)</label>
+                                    <input type="number" class="form-control" name="annual_turnover" id="annual_turnover" 
+                                           value="{{ business_registration.annual_turnover or '' }}" required
+                                           min="0" step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="date_of_incorporation">Date of Incorporation</label>
+                                    <input type="date" class="form-control" name="date_of_incorporation" id="date_of_incorporation" 
+                                           value="{{ business_registration.date_of_incorporation or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="premises_licence_number">Premises Licence Number</label>
+                                    <input type="text" class="form-control" name="premises_licence_number" id="premises_licence_number" 
+                                           value="{{ business_registration.premises_licence_number or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="website">Website</label>
+                                    <input type="url" class="form-control" name="website" id="website" 
+                                           value="{{ business_registration.website or '' }}"
+                                           placeholder="https://www.example.com">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business Address Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h4><i class="fa fa-map-marker"></i> Business Address</h4>
+                    </div>
+                    <div class="section-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="address_line1">Address Line 1</label>
+                                    <input type="text" class="form-control" name="address_line1" id="address_line1" 
+                                           value="{{ business_registration.address_line1 or '' }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="address_line2">Address Line 2</label>
+                                    <input type="text" class="form-control" name="address_line2" id="address_line2" 
+                                           value="{{ business_registration.address_line2 or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="address_line3">Address Line 3</label>
+                                    <input type="text" class="form-control" name="address_line3" id="address_line3" 
+                                           value="{{ business_registration.address_line3 or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="town_or_city">Town/City</label>
+                                    <input type="text" class="form-control" name="town_or_city" id="town_or_city" 
+                                           value="{{ business_registration.town_or_city or '' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="state">State</label>
+                                    <select class="form-control" name="state" id="state" required>
+                                        <option value="">Select State</option>
+                                        {% for state in nigerian_states %}
+                                        <option value="{{ state }}" {% if business_registration.state == state %}selected{% endif %}>{{ state }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="postal_code">Postal Code</label>
+                                    <input type="text" class="form-control" name="postal_code" id="postal_code" 
+                                           value="{{ business_registration.postal_code or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="local_government">Local Government</label>
+                                    <input type="text" class="form-control" name="local_government" id="local_government" 
+                                           value="{{ business_registration.local_government or '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="country">Country</label>
+                                    <input type="text" class="form-control" name="country" id="country" 
+                                           value="{{ business_registration.country or 'Nigeria' }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h4><i class="fa fa-phone"></i> Contact Information</h4>
+                    </div>
+                    <div class="section-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="contact_person">Contact Person</label>
+                                    <input type="text" class="form-control" name="contact_person" id="contact_person" 
+                                           value="{{ business_registration.contact_person or '' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="contact_email">Contact Email</label>
+                                    <input type="email" class="form-control" name="contact_email" id="contact_email" 
+                                           value="{{ business_registration.contact_email or '' }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="contact_phone_number">Contact Phone Number</label>
+                                    <input type="tel" class="form-control" name="contact_phone_number" id="contact_phone_number" 
+                                           value="{{ business_registration.contact_phone_number or '' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="alternative_phone">Alternative Phone</label>
+                                    <input type="tel" class="form-control" name="alternative_phone" id="alternative_phone" 
+                                           value="{{ business_registration.alternative_phone or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Representative Information Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h4><i class="fa fa-user-tie"></i> Authorized Representative</h4>
+                    </div>
+                    <div class="section-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="representative_full_name">Representative Full Name</label>
+                                    <input type="text" class="form-control" name="representative_full_name" id="representative_full_name" 
+                                           value="{{ business_registration.representative_full_name or '' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="representative_designation">Representative Designation</label>
+                                    <input type="text" class="form-control" name="representative_designation" id="representative_designation" 
+                                           value="{{ business_registration.representative_designation or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="representative_contact_email">Representative Contact Email</label>
+                                    <input type="email" class="form-control" name="representative_contact_email" id="representative_contact_email" 
+                                           value="{{ business_registration.representative_contact_email or '' }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="representative_contact_phone">Representative Contact Phone</label>
+                                    <input type="tel" class="form-control" name="representative_contact_phone" id="representative_contact_phone" 
+                                           value="{{ business_registration.representative_contact_phone or '' }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="representative_address">Representative Address</label>
+                                    <textarea class="form-control" name="representative_address" id="representative_address" rows="3">{{ business_registration.representative_address or '' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business References Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h4><i class="fa fa-handshake-o"></i> Business References</h4>
+                    </div>
+                    <div class="section-body">
+                        <div class="alert alert-info-soft">
+                            <i class="fa fa-info-circle"></i>
+                            Please provide details of at least 2 business references including company names, contact persons, phone numbers, and email addresses.
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="details_of_business_references">Details of Business References</label>
+                                    <textarea class="form-control" name="details_of_business_references" id="details_of_business_references" rows="6" 
+                                              placeholder="Reference 1:&#10;Company Name: &#10;Contact Person: &#10;Phone: &#10;Email: &#10;&#10;Reference 2:&#10;Company Name: &#10;Contact Person: &#10;Phone: &#10;Email: ">{{ business_registration.details_of_business_references or '' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Branch/Outlets Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h4><i class="fa fa-sitemap"></i> Branch/Outlets Information</h4>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="addBranch()">
+                            <i class="fa fa-plus"></i> Add Branch
+                        </button>
+                    </div>
+                    <div class="section-body">
+                        <div id="branches-container">
+                            {% if business_registration.branch_outlets %}
+                                {% for branch in business_registration.branch_outlets %}
+                                <div class="branch-row" data-index="{{ loop.index0 }}">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="form-group">
+                                                <label>Branch Name</label>
+                                                <input type="text" class="form-control" name="branch_outlets[{{ loop.index0 }}][branch_name]" 
+                                                       value="{{ branch.branch_name or '' }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Branch Address</label>
+                                                <input type="text" class="form-control" name="branch_outlets[{{ loop.index0 }}][branch_address]" 
+                                                       value="{{ branch.branch_address or '' }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <label>&nbsp;</label>
+                                                <button type="button" class="btn btn-sm btn-outline-danger btn-block" onclick="removeBranch(this)">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="text-muted">
+                            <small><i class="fa fa-info-circle"></i> Add information about your branch offices or outlets (optional)</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Required Documents Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h4><i class="fa fa-file-text"></i> Required Documents</h4>
+                    </div>
+                    <div class="section-body">
+                        <div class="alert alert-warning-soft">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            Please upload clear, legible copies of all required documents. Accepted formats: PDF, JPG, PNG (Max 5MB each)
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="business_registration_details">Business Registration Details</label>
+                                    <input type="file" class="form-control-file" name="business_registration_details" id="business_registration_details" 
+                                           accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <small class="form-text text-muted">Upload CAC certificate or business registration documents</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="proof_of_address">Proof of Address</label>
+                                    <input type="file" class="form-control-file" name="proof_of_address" id="proof_of_address" 
+                                           accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <small class="form-text text-muted">Upload utility bill, lease agreement, or other proof of business address</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="additional_documents">Additional Documents</label>
+                                    <input type="file" class="form-control-file" name="additional_documents" id="additional_documents" 
+                                           accept=".pdf,.jpg,.jpeg,.png">
+                                    <small class="form-text text-muted">Upload any additional supporting documents (optional)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <button type="submit" id="save-btn" class="btn btn-outline-primary btn-lg">
+                                <i class="fa fa-save"></i> Save Draft
+                            </button>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <!-- Added PDF download button -->
+                            <button type="button" id="download-pdf-btn" class="btn btn-outline-info btn-lg" style="display: none;">
+                                <i class="fa fa-file-pdf-o"></i> Download PDF
+                            </button>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <button type="button" id="submit-btn" class="btn btn-success btn-lg">
+                                <i class="fa fa-paper-plane"></i> Submit Application
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12 text-center">
+                            <small class="text-muted">
+                                By submitting this application, you confirm that all information provided is accurate and complete.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+:root {
+    --primary-color: #2c5aa0;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --text-color: #495057;
+}
+
+.business-form-container {
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding-bottom: 2rem;
+}
+
+.form-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1a365d 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+}
+
+.form-title {
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+.form-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.form-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.section-header {
+    background: var(--light-color);
+    padding: 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header h4 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.section-header h4 i {
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+}
+
+.section-body {
+    padding: 2rem;
+}
+
+.alert-info-soft {
+    background-color: #e7f3ff;
+    border-color: #b8daff;
+    color: #004085;
+}
+
+.alert-warning-soft {
+    background-color: #fff8e1;
+    border-color: #ffecb3;
+    color: #8a6d3b;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.form-group label.required::after {
+    content: " *";
+    color: var(--danger-color);
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--dark-color);
+    background-color: #fff;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(44, 90, 160, 0.25);
+}
+
+.form-control-file {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.branch-row {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #fafafa;
+}
+
+.form-actions {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    border: 2px solid transparent;
+}
+
+.btn i {
+    margin-right: 0.5rem;
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #1a365d;
+    border-color: #1a365d;
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #146c43;
+    border-color: #146c43;
+    transform: translateY(-1px);
+}
+
+.btn-outline-danger {
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+    background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+@media (max-width: 768px) {
+    .form-header {
+        padding: 2rem 0;
+    }
+    
+    .form-title {
+        font-size: 2rem;
+    }
+    
+    .section-body {
+        padding: 1.5rem;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .form-actions .text-right {
+        text-align: left !important;
+    }
+}
+</style>
+
+<script>
+let branchIndex = {{ business_registration.branch_outlets|length if business_registration.branch_outlets else 0 }};
+let currentRegistrationId = {{ '"' + business_registration.name + '"' if business_registration.name else 'null' }};
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Add required asterisks to labels
+    document.querySelectorAll('input[required], select[required], textarea[required]').forEach(function(el) {
+        const formGroup = el.closest('.form-group');
+        if (formGroup) {
+            const label = formGroup.querySelector('label');
+            if (label) {
+                label.classList.add('required');
+            }
+        }
+    });
+
+    const form = document.getElementById('business-registration-form');
+    const saveBtn = document.getElementById('save-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const downloadPdfBtn = document.getElementById('download-pdf-btn');
+    const messageContainer = document.getElementById('message-container');
+    const messageAlert = document.getElementById('message-alert');
+
+    if (currentRegistrationId) {
+        downloadPdfBtn.style.display = 'inline-flex';
+    }
+
+    function showMessage(message, type) {
+        messageAlert.className = `alert alert-${type} alert-dismissible fade show`;
+        messageAlert.innerHTML = `
+            ${message}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" style="border:none;background:transparent;float:right;">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        `;
+        messageContainer.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hideMessage() {
+        messageContainer.style.display = 'none';
+    }
+
+    // Save draft functionality
+    saveBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        hideMessage();
+        
+        const originalText = saveBtn.innerHTML;
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
+        
+        const formData = new FormData(form);
+        
+        fetch('/api/method/business_registration.www.business_form.create_or_update_registration', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Frappe-CSRF-Token': frappe.csrf_token
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message && data.message.status === 'success') {
+                showMessage('Registration saved as draft successfully!', 'success');
+                
+                // Update form with registration ID if new
+                if (data.message.registration_id && !document.querySelector('[name="registration_id"]')) {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'registration_id';
+                    hiddenInput.value = data.message.registration_id;
+                    form.appendChild(hiddenInput);
+                }
+                
+                if (data.message.registration_id) {
+                    currentRegistrationId = data.message.registration_id;
+                    downloadPdfBtn.style.display = 'inline-flex';
+                }
+            } else {
+                const errorMsg = data.message ? data.message.message : 'An error occurred while saving';
+                showMessage(errorMsg, 'danger');
+            }
+        })
+        .catch(error => {
+            showMessage('An error occurred while saving the registration', 'danger');
+        })
+        .finally(() => {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalText;
+        });
+    });
+
+    // Submit application functionality
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        hideMessage();
+        
+        // First save the form
+        const formData = new FormData(form);
+        
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting...';
+        
+        // Save first, then submit
+        fetch('/api/method/business_registration.www.business_form.create_or_update_registration', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Frappe-CSRF-Token': frappe.csrf_token
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message && data.message.status === 'success') {
+                // Now submit the application
+                const registrationId = data.message.registration_id;
+                
+                currentRegistrationId = registrationId;
+                downloadPdfBtn.style.display = 'inline-flex';
+                
+                return fetch('/api/method/business_registration.www.business_form.submit_registration', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Frappe-CSRF-Token': frappe.csrf_token
+                    },
+                    body: `registration_id=${registrationId}`
+                });
+            } else {
+                throw new Error(data.message ? data.message.message : 'Failed to save registration');
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message && data.message.status === 'success') {
+                showMessage(data.message.message, 'success');
+                
+                // Disable form after successful submission
+                setTimeout(() => {
+                    const inputs = form.querySelectorAll('input, select, textarea, button:not(#download-pdf-btn)');
+                    inputs.forEach(input => input.disabled = true);
+                    
+                    showMessage('Application submitted successfully! Form has been disabled. You will receive email notifications about the review status. You can download a PDF copy of your application using the button below.', 'info');
+                }, 2000);
+            } else {
+                const errorMsg = data.message ? data.message.message : 'An error occurred while submitting';
+                showMessage(errorMsg, 'danger');
+            }
+        })
+        .catch(error => {
+            showMessage('An error occurred while submitting the application: ' + error.message, 'danger');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        });
+    });
+
+    downloadPdfBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        if (!currentRegistrationId) {
+            showMessage('Please save your registration first before downloading PDF', 'warning');
+            return;
+        }
+        
+        const originalText = downloadPdfBtn.innerHTML;
+        downloadPdfBtn.disabled = true;
+        downloadPdfBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Generating PDF...';
+        
+        const pdfUrl = `/api/method/business_registration.business_registration.doctype.business_registration.business_registration.generate_registration_pdf?name=${encodeURIComponent(currentRegistrationId)}`;
+        
+        // Create a temporary link to trigger download
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.target = '_blank';
+        link.download = `Business_Registration_${currentRegistrationId}.pdf`;
+        
+        // Add to DOM, click, and remove
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Reset button after a short delay
+        setTimeout(() => {
+            downloadPdfBtn.innerHTML = originalText;
+            downloadPdfBtn.disabled = false;
+            showMessage('PDF download started successfully!', 'success');
+        }, 1000);
+    });
+});
+
+function addBranch() {
+    const container = document.getElementById('branches-container');
+    const branchHtml = `
+        <div class="branch-row" data-index="${branchIndex}">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label>Branch Name</label>
+                        <input type="text" class="form-control" name="branch_outlets[${branchIndex}][branch_name]">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Branch Address</label>
+                        <input type="text" class="form-control" name="branch_outlets[${branchIndex}][branch_address]">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-block" onclick="removeBranch(this)">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', branchHtml);
+    branchIndex++;
+}
+
+function removeBranch(button) {
+    const branchRow = button.closest('.branch-row');
+    branchRow.remove();
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,798 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block page_content %}
+<div class="business-dashboard-container">
+    <div class="dashboard-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="dashboard-title">
+                        <i class="fa fa-building"></i> Business Registration Dashboard
+                    </h1>
+                    <p class="dashboard-subtitle">Review and manage business registration applications</p>
+                </div>
+                <div class="col-md-4 text-right">
+                    <div class="header-actions">
+                        <button class="btn btn-outline-light" onclick="exportRegistrations()">
+                            <i class="fa fa-download"></i> Export
+                        </button>
+                        <button class="btn btn-light" onclick="refreshDashboard()">
+                            <i class="fa fa-refresh"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="stats-section">
+            <div class="row">
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card stats-primary">
+                        <div class="stats-icon">
+                            <i class="fa fa-building"></i>
+                        </div>
+                        <div class="stats-content">
+                            <h3>{{ stats.total_applications }}</h3>
+                            <p>Total Applications</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card stats-warning">
+                        <div class="stats-icon">
+                            <i class="fa fa-clock-o"></i>
+                        </div>
+                        <div class="stats-content">
+                            <h3>{{ stats.pending_applications }}</h3>
+                            <p>Pending Review</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card stats-success">
+                        <div class="stats-icon">
+                            <i class="fa fa-check-circle"></i>
+                        </div>
+                        <div class="stats-content">
+                            <h3>{{ stats.approved_applications }}</h3>
+                            <p>Approved</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card stats-danger">
+                        <div class="stats-icon">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stats-content">
+                            <h3>{{ stats.high_priority_applications }}</h3>
+                            <p>High Priority</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="filters-section">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fa fa-filter"></i> Filters</h5>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearFilters()">
+                        Clear All
+                    </button>
+                </div>
+                <div class="card-body">
+                    <form id="filter-form" method="get">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="search">Search</label>
+                                    <input type="text" class="form-control" id="search" name="search"
+                                           value="{{ current_filters.search }}"
+                                           placeholder="Business name, CAC...">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="status">Status</label>
+                                    <select class="form-control" id="status" name="status">
+                                        {% for status in filter_options.statuses %}
+                                        <option value="{{ status.value }}"
+                                                {% if current_filters.status == status.value %}selected{% endif %}>
+                                            {{ status.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="business_type">Business Type</label>
+                                    <select class="form-control" id="business_type" name="business_type">
+                                        <option value="">All Types</option>
+                                        {% for type in filter_options.business_types %}
+                                        <option value="{{ type.name }}"
+                                                {% if current_filters.business_type == type.name %}selected{% endif %}>
+                                            {{ type.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="state">State</label>
+                                    <select class="form-control" id="state" name="state">
+                                        <option value="">All States</option>
+                                        {% for state in filter_options.states %}
+                                        <option value="{{ state.name }}"
+                                                {% if current_filters.state == state.name %}selected{% endif %}>
+                                            {{ state.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="reviewed_by">Reviewed By</label>
+                                    <select class="form-control" id="reviewed_by" name="reviewed_by">
+                                        <option value="">All Reviewers</option>
+                                        {% for reviewer in filter_options.reviewers %}
+                                        <option value="{{ reviewer.name }}"
+                                                {% if current_filters.reviewed_by == reviewer.name %}selected{% endif %}>
+                                            {{ reviewer.full_name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>&nbsp;</label>
+                                    <button type="submit" class="btn btn-primary btn-block">
+                                        <i class="fa fa-search"></i> Filter
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="registrations-section">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="fa fa-list"></i> Business Registrations ({{ registrations|length }})</h5>
+                    <div class="view-controls">
+                        <button class="btn btn-sm btn-outline-secondary view-btn active" data-view="table">
+                            <i class="fa fa-table"></i> Table
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary view-btn" data-view="grid">
+                            <i class="fa fa-th"></i> Grid
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="table-view" class="view-content">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Business Details</th>
+                                        <th>Contact Information</th>
+                                        <th>Location</th>
+                                        <th>Status</th>
+                                        <th>Submission Date</th>
+                                        <th>Priority</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for registration in registrations %}
+                                    <tr class="registration-row" data-status="{{ registration.application_status }}">
+                                        <td>
+                                            <div class="business-info">
+                                                <div class="business-icon">
+                                                    <i class="fa fa-building"></i>
+                                                </div>
+                                                <div class="business-details">
+                                                    <strong>{{ registration.business_name }}</strong>
+                                                    <br><small class="text-muted">CAC: {{ registration.cac_number }}</small>
+                                                    {% if registration.business_type %}
+                                                    <br><small class="text-info">{{ registration.business_type }}</small>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <i class="fa fa-user text-muted"></i> {{ registration.contact_person }}
+                                                <br><i class="fa fa-envelope text-muted"></i> {{ registration.contact_email }}
+                                                {% if registration.contact_phone_number %}
+                                                <br><i class="fa fa-phone text-muted"></i> {{ registration.contact_phone_number }}
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {{ registration.town_or_city or '' }}{% if registration.town_or_city and registration.state %}, {% endif %}{{ registration.state or '' }}
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-{{ 'success' if registration.application_status == 'Approved' else 'warning' if registration.application_status in ['Submitted', 'Under Review'] else 'danger' if registration.application_status == 'Rejected' else 'secondary' }}">
+                                                {{ registration.application_status }}
+                                            </span>
+                                            {% if registration.days_pending > 0 %}
+                                            <br><small class="text-muted">{{ registration.days_pending }} days ago</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if registration.submission_date %}
+                                            {{ frappe.utils.formatdate(registration.submission_date) }}
+                                            {% else %}-{% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="priority-badge priority-{{ registration.priority.lower() }}">
+                                                {{ registration.priority }}
+                                            </span>
+                                        </td>
+                                        <td class="actions-cell">
+                                            <button class="btn btn-sm btn-outline-info" onclick="viewRegistration('{{ registration.name }}')" title="View Details">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="downloadPDF('{{ registration.name }}')" title="Download PDF">
+                                                <i class="fa fa-file-pdf-o"></i>
+                                            </button>
+                                            {% if registration.application_status in ['Submitted', 'Under Review'] %}
+                                            <button class="btn btn-sm btn-outline-success" onclick="approveRegistration('{{ registration.name }}')" title="Approve">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="rejectRegistration('{{ registration.name }}')" title="Reject">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="grid-view" class="view-content" style="display: none;">
+                        <div class="registration-grid">
+                            {% for registration in registrations %}
+                            <div class="registration-card" data-status="{{ registration.application_status }}">
+                                <div class="registration-card-header">
+                                    <div class="business-icon">
+                                        <i class="fa fa-building"></i>
+                                    </div>
+                                    <span class="badge badge-{{ 'success' if registration.application_status == 'Approved' else 'warning' if registration.application_status in ['Submitted', 'Under Review'] else 'danger' if registration.application_status == 'Rejected' else 'secondary' }}">
+                                        {{ registration.application_status }}
+                                    </span>
+                                </div>
+                                <div class="registration-card-body">
+                                    <h6>{{ registration.business_name }}</h6>
+                                    <p class="text-muted">{{ registration.cac_number }}</p>
+                                    <p><strong>{{ registration.contact_person }}</strong></p>
+                                    <p>{{ registration.contact_email }}</p>
+                                    <p>{{ registration.town_or_city }}{% if registration.town_or_city and registration.state %}, {% endif %}{{ registration.state }}</p>
+                                    <span class="priority-badge priority-{{ registration.priority.lower() }}">
+                                        {{ registration.priority }} Priority
+                                    </span>
+                                </div>
+                                <div class="registration-card-actions">
+                                    <button class="btn btn-sm btn-info" onclick="viewRegistration('{{ registration.name }}')">
+                                        <i class="fa fa-eye"></i> View
+                                    </button>
+                                    <button class="btn btn-sm btn-primary" onclick="downloadPDF('{{ registration.name }}')">
+                                        <i class="fa fa-file-pdf-o"></i> PDF
+                                    </button>
+                                    {% if registration.application_status in ['Submitted', 'Under Review'] %}
+                                    <button class="btn btn-sm btn-success" onclick="approveRegistration('{{ registration.name }}')">
+                                        <i class="fa fa-check"></i> Approve
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+:root {
+    --primary-color: #0d6efd;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --info-color: #0dcaf0;
+    --danger-color: #dc3545;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+}
+
+.business-dashboard-container { background: #f0f2f5; min-height: 100vh; }
+.dashboard-header { background: linear-gradient(135deg, #2c5aa0 0%, #1a365d 100%); color: white; padding: 2rem 0; margin-bottom: 2rem; }
+.dashboard-title { font-size: 2.5rem; font-weight: 300; }
+.dashboard-subtitle { opacity: 0.9; margin-bottom: 0; }
+.header-actions .btn { margin-left: 0.5rem; }
+
+/* Updated stats cards for business registration context */
+.stats-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); display: flex; align-items: center; margin-bottom: 1rem; transition: transform 0.2s ease; }
+.stats-card:hover { transform: translateY(-2px); }
+.stats-icon { font-size: 2.5rem; margin-right: 1rem; opacity: 0.8; }
+.stats-primary .stats-icon { color: var(--primary-color); }
+.stats-success .stats-icon { color: var(--success-color); }
+.stats-warning .stats-icon { color: var(--warning-color); }
+.stats-info .stats-icon { color: var(--info-color); }
+.stats-danger .stats-icon { color: var(--danger-color); }
+.stats-content h3 { font-size: 2rem; font-weight: 700; margin-bottom: 0; }
+.stats-content p { margin-bottom: 0; color: #6c757d; font-weight: 500; }
+
+.card { border: none; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+.card-header { background: var(--light-color); border-bottom: 1px solid #dee2e6; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+.card-header h5 { margin: 0; font-weight: 600; }
+
+/* Business-specific styling for registration cards */
+.business-info { display: flex; align-items: center; }
+.business-icon { width: 40px; height: 40px; border-radius: 8px; background: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; margin-right: 0.75rem; }
+.business-details strong { color: var(--dark-color); }
+
+.priority-badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+.priority-high { background: #fee; color: #c53030; }
+.priority-medium { background: #fffbeb; color: #d69e2e; }
+.priority-normal { background: #f0fff4; color: #38a169; }
+
+.registration-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; padding: 1.5rem; }
+.registration-card { background: white; border-radius: 8px; border: 1px solid #e9ecef; transition: box-shadow 0.2s ease; display: flex; flex-direction: column; }
+.registration-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+.registration-card-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1rem 0 1rem; }
+.registration-card-body { padding: 1rem; text-align: center; flex-grow: 1; }
+.registration-card-body h6 { font-weight: 600; }
+.registration-card-body p { margin-bottom: 0.25rem; font-size: 0.9rem; }
+.registration-card-actions { border-top: 1px solid #e9ecef; padding: 0.75rem; display: flex; justify-content: space-around; }
+.registration-card-actions .btn { flex-grow: 1; margin: 0 0.25rem; }
+
+.view-controls .view-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+.actions-cell { white-space: nowrap; }
+.actions-cell .btn { margin-right: 5px; }
+
+.table th { background: var(--light-color); font-weight: 600; color: var(--dark-color); }
+.badge-success { background-color: #d1e7dd; color: #0a3622; }
+.badge-warning { background-color: #fff3cd; color: #664d03; }
+.badge-danger { background-color: #f8d7da; color: #721c24; }
+.badge-secondary { background-color: #e2e3e5; color: #41464b; }
+</style>
+
+<script>
+
+// View Toggle
+document.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const view = this.dataset.view;
+        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.view-content').forEach(content => {
+            content.style.display = 'none';
+        });
+        document.getElementById(view + '-view').style.display = 'block';
+    });
+});
+
+function clearFilters() {
+    window.location.href = '/business_dashboard';
+}
+
+function refreshDashboard() {
+    window.location.reload();
+}
+
+function exportRegistrations() {
+    const btn = event.target.closest('button');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Exporting...';
+    btn.disabled = true;
+
+    const exportUrl = '/api/method/business_registration.www.business_dashboard.export_registrations' + window.location.search;
+
+    fetch(exportUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                downloadCSV(data.message, 'business_registrations_export.csv');
+                showNotification('Export completed successfully!', 'success');
+            } else { throw new Error('Export failed'); }
+        })
+        .catch(error => {
+            showNotification('Export failed. Please try again.', 'error');
+        })
+        .finally(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+}
+
+function viewRegistration(registrationId) {
+    if (!registrationId) {
+        showNotification('Registration ID is missing', 'error');
+        return;
+    }
+    
+    const modal = createModal('registration-details-modal', 'Business Registration Details', '', 'large');
+    modal.querySelector('.modal-body').innerHTML = '<div class="text-center p-5"><i class="fa fa-spinner fa-spin fa-2x"></i><p>Loading Details...</p></div>';
+
+    const url = `/api/method/business_registration.www.business_dashboard.get_registration_details?registration_id=${encodeURIComponent(registrationId)}`;
+    
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Frappe-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`HTTP error! status: ${response.status}, response: ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.message) {
+            modal.querySelector('.modal-body').innerHTML = buildRegistrationDetailsHTML(data.message);
+        } else {
+            throw new Error('No data returned');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        modal.querySelector('.modal-body').innerHTML = '<div class="alert alert-danger">Failed to load registration details: ' + error.message + '</div>';
+    });
+}
+
+function approveRegistration(registrationId) {
+    const modal = createModal('approve-modal', 'Approve Application', `
+        <form id="approve-form">
+            <div class="form-group">
+                <label for="internal-notes">Internal Notes (Optional)</label>
+                <textarea class="form-control" id="internal-notes" rows="3" placeholder="Add any internal notes about this approval..."></textarea>
+            </div>
+            <div class="text-right">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-success">Approve Application</button>
+            </div>
+        </form>
+    `);
+
+    modal.querySelector('#approve-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const internalNotes = modal.querySelector('#internal-notes').value;
+        
+        updateApplicationStatus(registrationId, 'Approved', null, internalNotes)
+            .then(() => {
+                $(modal).modal('hide');
+                showNotification('Application approved successfully!', 'success');
+                setTimeout(() => window.location.reload(), 1500);
+            });
+    });
+}
+
+function rejectRegistration(registrationId) {
+    const modal = createModal('reject-modal', 'Reject Application', `
+        <form id="reject-form">
+            <div class="form-group">
+                <label for="rejection-reason">Rejection Reason <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="rejection-reason" rows="4" placeholder="Please provide a detailed reason for rejection..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="internal-notes-reject">Internal Notes (Optional)</label>
+                <textarea class="form-control" id="internal-notes-reject" rows="3" placeholder="Add any internal notes..."></textarea>
+            </div>
+            <div class="text-right">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger">Reject Application</button>
+            </div>
+        </form>
+    `);
+
+    modal.querySelector('#reject-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const rejectionReason = modal.querySelector('#rejection-reason').value;
+        const internalNotes = modal.querySelector('#internal-notes-reject').value;
+        
+        if (!rejectionReason.trim()) {
+            showNotification('Rejection reason is required', 'error');
+            return;
+        }
+        
+        updateApplicationStatus(registrationId, 'Rejected', rejectionReason, internalNotes)
+            .then(() => {
+                $(modal).modal('hide');
+                showNotification('Application rejected successfully!', 'success');
+                setTimeout(() => window.location.reload(), 1500);
+            });
+    });
+}
+
+function updateApplicationStatus(registrationId, newStatus, rejectionReason = null, internalNotes = null) {
+    return fetch('/api/method/business_registration.www.business_dashboard.update_application_status', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Frappe-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+            registration_id: registrationId,
+            new_status: newStatus,
+            rejection_reason: rejectionReason,
+            internal_notes: internalNotes
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message && data.message.status === 'success') {
+            return data.message;
+        } else {
+            throw new Error(data.message || 'Update failed');
+        }
+    })
+    .catch(error => {
+        showNotification('Failed to update application: ' + error.message, 'error');
+        throw error;
+    });
+}
+
+function buildRegistrationDetailsHTML(registration) {
+    return `
+        <div class="registration-details-modal">
+            <div class="row">
+                <div class="col-md-3 text-center">
+                    <div class="business-logo mb-3">
+                        <div class="business-icon-large">
+                            <i class="fa fa-building fa-4x text-primary"></i>
+                        </div>
+                    </div>
+                    <h5>${registration.business_name}</h5>
+                    <p class="text-muted">${registration.cac_number}</p>
+                    <span class="badge badge-${registration.application_status === 'Approved' ? 'success' : registration.application_status === 'Rejected' ? 'danger' : 'warning'}">${registration.application_status}</span>
+                    ${registration.priority ? `<br><span class="priority-badge priority-${registration.priority.toLowerCase()} mt-2">${registration.priority} Priority</span>` : ''}
+                </div>
+                <div class="col-md-9">
+                    <div class="details-tabs">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#business-info">Business</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#contact-info">Contact</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#address-info">Address</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#representative-info">Representative</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#branches-info">Branches</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#documents-info">Documents</a></li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#workflow-info">Workflow</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="business-info" class="tab-pane active">${buildDetailsTab(registration, [
+                                {label: 'Business Name', key: 'business_name'}, {label: 'CAC Number', key: 'cac_number'},
+                                {label: 'Business Type', key: 'business_type'}, {label: 'Date of Incorporation', key: 'date_of_incorporation', type: 'date'},
+                                {label: 'Annual Turnover', key: 'annual_turnover', type: 'currency'}, {label: 'Premises Licence', key: 'premises_licence_number'}
+                            ])}</div>
+                            <div id="contact-info" class="tab-pane">${buildDetailsTab(registration, [
+                                {label: 'Contact Person', key: 'contact_person'}, {label: 'Contact Email', key: 'contact_email'},
+                                {label: 'Contact Phone', key: 'contact_phone_number'}, {label: 'Alternative Phone', key: 'alternative_phone'},
+                                {label: 'Website', key: 'website'}
+                            ])}</div>
+                            <div id="address-info" class="tab-pane">${buildDetailsTab(registration, [
+                                {label: 'Address Line 1', key: 'address_line1'}, {label: 'Address Line 2', key: 'address_line2'},
+                                {label: 'Address Line 3', key: 'address_line3'}, {label: 'Town/City', key: 'town_or_city'},
+                                {label: 'Local Government', key: 'local_government'}, {label: 'State', key: 'state'},
+                                {label: 'Postal Code', key: 'postal_code'}, {label: 'Country', key: 'country'}
+                            ])}</div>
+                            <div id="representative-info" class="tab-pane">${buildDetailsTab(registration, [
+                                {label: 'Full Name', key: 'representative_full_name'}, {label: 'Email', key: 'representative_contact_email'},
+                                {label: 'Phone', key: 'representative_contact_phone'}, {label: 'Designation', key: 'representative_designation'},
+                                {label: 'Address', key: 'representative_address', type: 'textarea'}
+                            ])}</div>
+                            <div id="branches-info" class="tab-pane">${buildBranchesTab(registration.branch_outlets_list)}</div>
+                            <div id="documents-info" class="tab-pane">${buildDocumentsTab(registration)}</div>
+                            <div id="workflow-info" class="tab-pane">${buildWorkflowTab(registration)}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions text-right mt-4 pt-3 border-top">
+                <button type="button" class="btn btn-outline-primary" onclick="downloadPDF('${registration.name}')">
+                    <i class="fa fa-file-pdf-o"></i> Download PDF
+                </button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                ${registration.application_status === 'Submitted' || registration.application_status === 'Under Review' ? `
+                    <button type="button" class="btn btn-success" onclick="approveRegistration('${registration.name}')">
+                        <i class="fa fa-check"></i> Approve
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="rejectRegistration('${registration.name}')">
+                        <i class="fa fa-times"></i> Reject
+                    </button>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
+
+function buildDetailsTab(registration, fields) {
+    let content = '<table class="table table-sm table-borderless">';
+    fields.forEach(field => {
+        let value = registration[field.key] || '<span class="text-muted">Not Set</span>';
+        if (field.type === 'date' && registration[field.key]) {
+            value = formatDate(registration[field.key]);
+        }
+        if (field.type === 'currency' && registration[field.key]) {
+            value = new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(registration[field.key]);
+        }
+        if (field.type === 'textarea' && value !== '<span class="text-muted">Not Set</span>') {
+            value = `<pre style="white-space: pre-wrap; word-break: break-all; background: #f8f9fa; padding: 5px; border-radius: 4px;">${value}</pre>`;
+        }
+        content += `<tr><td><strong>${field.label}</strong></td><td>${value}</td></tr>`;
+    });
+    content += '</table>';
+    return content;
+}
+
+function buildBranchesTab(branches) {
+    if (!branches || branches.length === 0) {
+        return '<p class="text-muted">No branches/outlets listed.</p>';
+    }
+    
+    let content = '<table class="table table-sm table-striped"><thead><tr><th>Branch Name</th><th>Branch Address</th></tr></thead><tbody>';
+    branches.forEach(branch => {
+        content += `<tr><td>${branch.branch_name || ''}</td><td>${branch.branch_address || ''}</td></tr>`;
+    });
+    content += '</tbody></table>';
+    return content;
+}
+
+function buildDocumentsTab(registration) {
+    return `
+        <table class="table table-sm table-borderless">
+            <tr><td><strong>Business Registration Details</strong></td><td>${registration.business_registration_details ? `<a href="${registration.business_registration_details}" target="_blank"><i class="fa fa-file"></i> View Document</a>` : '<span class="text-muted">Not uploaded</span>'}</td></tr>
+            <tr><td><strong>Proof of Address</strong></td><td>${registration.proof_of_address ? `<a href="${registration.proof_of_address}" target="_blank"><i class="fa fa-file"></i> View Document</a>` : '<span class="text-muted">Not uploaded</span>'}</td></tr>
+            <tr><td><strong>Additional Documents</strong></td><td>${registration.additional_documents ? `<a href="${registration.additional_documents}" target="_blank"><i class="fa fa-file"></i> View Document</a>` : '<span class="text-muted">Not uploaded</span>'}</td></tr>
+        </table>
+        ${registration.details_of_business_references ? `
+            <h6 class="mt-4">Business References</h6>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
+                ${registration.details_of_business_references.replace(/\n/g, '<br>')}
+            </div>
+        ` : ''}
+    `;
+}
+
+function buildWorkflowTab(registration) {
+    return buildDetailsTab(registration, [
+        {label: 'Application Status', key: 'application_status'}, {label: 'Submission Date', key: 'submission_date', type: 'date'},
+        {label: 'Review Date', key: 'review_date', type: 'date'}, {label: 'Approval Date', key: 'approval_date', type: 'date'},
+        {label: 'Reviewed By', key: 'reviewed_by'}, {label: 'Rejection Reason', key: 'rejection_reason', type: 'textarea'},
+        {label: 'Internal Notes', key: 'internal_notes', type: 'textarea'}
+    ]);
+}
+
+// Utility functions
+function downloadCSV(data, filename) {
+    if (!data || data.length === 0) {
+        showNotification('No data to export', 'warning');
+        return;
+    }
+    const headers = Object.keys(data[0]);
+    let csvContent = headers.join(',') + '\n';
+    data.forEach(row => {
+        const values = headers.map(header => {
+            let value = row[header] === null || row[header] === undefined ? '' : row[header];
+            if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+                value = '"' + value.replace(/"/g, '""') + '"';
+            }
+            return value;
+        });
+        csvContent += values.join(',') + '\n';
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+function createModal(id, title, content, size = 'default') {
+   const existing = document.getElementById(id);
+   if (existing) existing.remove();
+   const sizeClass = size === 'large' ? 'modal-lg' : size === 'small' ? 'modal-sm' : '';
+   const modalHTML = `
+       <div class="modal fade" id="${id}" tabindex="-1" role="dialog">
+           <div class="modal-dialog ${sizeClass}" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">${title}</h5><button type="button" class="close" data-dismiss="modal"><span>&times;</span></button></div><div class="modal-body">${content}</div></div></div>
+       </div>`;
+   document.body.insertAdjacentHTML('beforeend', modalHTML);
+   const modal = document.getElementById(id);
+   $(modal).modal('show');
+   $(modal).on('hidden.bs.modal', () => modal.remove());
+   return modal;
+}
+
+function showNotification(message, type = 'info') {
+   const alertClass = { success: 'alert-success', error: 'alert-danger', warning: 'alert-warning', info: 'alert-info' }[type];
+   const notification = document.createElement('div');
+   notification.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+   notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
+   notification.innerHTML = `${message}<button type="button" class="close" data-dismiss="alert">&times;</button>`;
+   document.body.appendChild(notification);
+   setTimeout(() => $(notification).alert('close'), 5000);
+}
+
+function formatDate(dateString) {
+   if (!dateString) return '';
+   try { return new Date(dateString).toLocaleDateString('en-GB'); }
+   catch (e) { return dateString; }
+}
+
+function downloadPDF(registrationId) {
+    if (!registrationId) {
+        showNotification('Registration ID is missing', 'error');
+        return;
+    }
+    
+    const btn = event.target.closest('button');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Generating...';
+    btn.disabled = true;
+
+    const pdfUrl = `/api/method/business_registration.business_registration.doctype.business_registration.business_registration.generate_registration_pdf?name=${encodeURIComponent(registrationId)}`;
+    
+    // Create a temporary link to trigger download
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.target = '_blank';
+    link.download = `Business_Registration_${registrationId}.pdf`;
+    
+    // Add to DOM, click, and remove
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Reset button after a short delay
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        showNotification('PDF download started', 'success');
+    }, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+   const filterForm = document.getElementById('filter-form');
+   if (!filterForm) return;
+
+   filterForm.addEventListener('change', () => {
+       setTimeout(() => filterForm.submit(), 300);
+   });
+
+   const searchInput = document.getElementById('search');
+   if (searchInput) {
+       let searchTimeout;
+       searchInput.addEventListener('input', () => {
+           clearTimeout(searchTimeout);
+           searchTimeout = setTimeout(() => filterForm.submit(), 500);
+       });
+   }
+});
+</script>
+
+{% endblock %}
