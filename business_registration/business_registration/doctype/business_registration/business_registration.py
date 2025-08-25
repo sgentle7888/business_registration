@@ -1,6 +1,9 @@
 # Copyright (c) 2025, Business Registration App and contributors
 # For license information, please see license.txt
 
+# Copyright (c) 2025, Business Registration App and contributors
+# For license information, please see license.txt
+
 import frappe
 from frappe.model.document import Document
 from frappe import _
@@ -169,6 +172,9 @@ class BusinessRegistration(Document):
         if self.has_value_changed("application_status"):
             old_status = self.get_db_value("application_status") or "Draft"
             new_status = self.application_status
+            
+            if old_status == new_status:
+                return
             
             allowed_transitions = {
                 "Draft": ["Submitted"],
