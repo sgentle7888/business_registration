@@ -21,6 +21,15 @@ from .email_notifications import (
 
 class BusinessRegistration(Document):
     def validate(self):
+        # Skip mandatory validation for attachments when status is Draft
+        if self.application_status == "Draft":
+            # Temporarily remove mandatory requirement for attachments
+            meta = frappe.get_meta("Business Registration")
+            for fieldname in ["business_registration_details", "proof_of_address"]:
+                field = meta.get_field(fieldname)
+                if field:
+                    field.reqd = 0
+
         self.validate_email_format()
         self.validate_phone_numbers()
         self.validate_cac_number()

@@ -4,6 +4,25 @@
 
 {% block page_content %}
 <div class="business-form-container">
+    <!-- Added company header section with logo and name -->
+    <div class="company-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <div class="company-logo">
+                        <img src="/assets/business_registration/images/company-logo.png" alt="Company Logo" class="logo-img">
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="company-info">
+                        <h2 class="company-name">Business Registration Authority</h2>
+                        <p class="company-tagline">Streamlining Business Registration Process</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="form-header">
         <div class="container">
             <div class="row">
@@ -207,15 +226,55 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="contact_phone_number">Contact Phone Number</label>
-                                    <input type="tel" class="form-control" name="contact_phone_number" id="contact_phone_number" 
-                                           value="{{ business_registration.contact_phone_number or '' }}" required>
+                                    <!-- Added country code dropdown for phone number -->
+                                    <div class="phone-input-group">
+                                        <select class="form-control country-code-select" name="contact_phone_country_code" id="contact_phone_country_code" required>
+                                            <option value="">Select Country</option>
+                                            <option value="+93" data-country="Afghanistan" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+93') %}selected{% endif %}>🇦🇫 Afghanistan (+93)</option>
+                                            <option value="+355" data-country="Albania" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+355') %}selected{% endif %}>🇦🇱 Albania (+355)</option>
+                                            <option value="+213" data-country="Algeria" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+213') %}selected{% endif %}>🇩🇿 Algeria (+213)</option>
+                                            <option value="+1" data-country="United States" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+1') %}selected{% endif %}>🇺🇸 United States (+1)</option>
+                                            <option value="+44" data-country="United Kingdom" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+44') %}selected{% endif %}>🇬🇧 United Kingdom (+44)</option>
+                                            <option value="+234" data-country="Nigeria" {% if not business_registration.contact_phone_number or business_registration.contact_phone_number.startswith('+234') %}selected{% endif %}>🇳🇬 Nigeria (+234)</option>
+                                            <option value="+27" data-country="South Africa" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+27') %}selected{% endif %}>🇿🇦 South Africa (+27)</option>
+                                            <option value="+254" data-country="Kenya" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+254') %}selected{% endif %}>🇰🇪 Kenya (+254)</option>
+                                            <option value="+233" data-country="Ghana" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+233') %}selected{% endif %}>🇬🇭 Ghana (+233)</option>
+                                            <option value="+91" data-country="India" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+91') %}selected{% endif %}>🇮🇳 India (+91)</option>
+                                            <option value="+86" data-country="China" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+86') %}selected{% endif %}>🇨🇳 China (+86)</option>
+                                            <option value="+33" data-country="France" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+33') %}selected{% endif %}>🇫🇷 France (+33)</option>
+                                            <option value="+49" data-country="Germany" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+49') %}selected{% endif %}>🇩🇪 Germany (+49)</option>
+                                        </select>
+                                        <input type="tel" class="form-control phone-number-input" name="contact_phone_number" id="contact_phone_number" 
+                                               value="{{ business_registration.contact_phone_number.replace('+234', '').replace('+1', '').replace('+44', '').replace('+91', '').replace('+86', '').replace('+33', '').replace('+49', '').replace('+27', '').replace('+254', '').replace('+233', '') if business_registration.contact_phone_number else '' }}" 
+                                               placeholder="Enter phone number" required>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="alternative_phone">Alternative Phone</label>
-                                    <input type="tel" class="form-control" name="alternative_phone" id="alternative_phone" 
-                                           value="{{ business_registration.alternative_phone or '' }}">
+                                    <!-- Added country code dropdown for alternative phone -->
+                                    <div class="phone-input-group">
+                                        <select class="form-control country-code-select" name="alternative_phone_country_code" id="alternative_phone_country_code">
+                                            <option value="">Select Country</option>
+                                            <option value="+93" data-country="Afghanistan">🇦🇫 Afghanistan (+93)</option>
+                                            <option value="+355" data-country="Albania">🇦🇱 Albania (+355)</option>
+                                            <option value="+213" data-country="Algeria">🇩🇿 Algeria (+213)</option>
+                                            <option value="+1" data-country="United States">🇺🇸 United States (+1)</option>
+                                            <option value="+44" data-country="United Kingdom">🇬🇧 United Kingdom (+44)</option>
+                                            <option value="+234" data-country="Nigeria" selected>🇳🇬 Nigeria (+234)</option>
+                                            <option value="+27" data-country="South Africa">🇿🇦 South Africa (+27)</option>
+                                            <option value="+254" data-country="Kenya">🇰🇪 Kenya (+254)</option>
+                                            <option value="+233" data-country="Ghana">🇬🇭 Ghana (+233)</option>
+                                            <option value="+91" data-country="India">🇮🇳 India (+91)</option>
+                                            <option value="+86" data-country="China">🇨🇳 China (+86)</option>
+                                            <option value="+33" data-country="France">🇫🇷 France (+33)</option>
+                                            <option value="+49" data-country="Germany">🇩🇪 Germany (+49)</option>
+                                        </select>
+                                        <input type="tel" class="form-control phone-number-input" name="alternative_phone" id="alternative_phone" 
+                                               value="{{ business_registration.alternative_phone.replace('+234', '').replace('+1', '').replace('+44', '').replace('+91', '').replace('+86', '').replace('+33', '').replace('+49', '').replace('+27', '').replace('+254', '').replace('+233', '') if business_registration.alternative_phone else '' }}" 
+                                               placeholder="Enter phone number">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -255,8 +314,28 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="representative_contact_phone">Representative Contact Phone</label>
-                                    <input type="tel" class="form-control" name="representative_contact_phone" id="representative_contact_phone" 
-                                           value="{{ business_registration.representative_contact_phone or '' }}" required>
+                                    <!-- Added country code dropdown for representative phone -->
+                                    <div class="phone-input-group">
+                                        <select class="form-control country-code-select" name="representative_contact_phone_country_code" id="representative_contact_phone_country_code" required>
+                                            <option value="">Select Country</option>
+                                            <option value="+93" data-country="Afghanistan">🇦🇫 Afghanistan (+93)</option>
+                                            <option value="+355" data-country="Albania">🇦🇱 Albania (+355)</option>
+                                            <option value="+213" data-country="Algeria">🇩🇿 Algeria (+213)</option>
+                                            <option value="+1" data-country="United States">🇺🇸 United States (+1)</option>
+                                            <option value="+44" data-country="United Kingdom">🇬🇧 United Kingdom (+44)</option>
+                                            <option value="+234" data-country="Nigeria" selected>🇳🇬 Nigeria (+234)</option>
+                                            <option value="+27" data-country="South Africa">🇿🇦 South Africa (+27)</option>
+                                            <option value="+254" data-country="Kenya">🇰🇪 Kenya (+254)</option>
+                                            <option value="+233" data-country="Ghana">🇬🇭 Ghana (+233)</option>
+                                            <option value="+91" data-country="India">🇮🇳 India (+91)</option>
+                                            <option value="+86" data-country="China">🇨🇳 China (+86)</option>
+                                            <option value="+33" data-country="France">🇫🇷 France (+33)</option>
+                                            <option value="+49" data-country="Germany">🇩🇪 Germany (+49)</option>
+                                        </select>
+                                        <input type="tel" class="form-control phone-number-input" name="representative_contact_phone" id="representative_contact_phone" 
+                                               value="{{ business_registration.representative_contact_phone.replace('+234', '').replace('+1', '').replace('+44', '').replace('+91', '').replace('+86', '').replace('+33', '').replace('+49', '').replace('+27', '').replace('+254', '').replace('+233', '') if business_registration.representative_contact_phone else '' }}" 
+                                               placeholder="Enter phone number" required>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -424,6 +503,57 @@
     --light-color: #f8f9fa;
     --dark-color: #212529;
     --text-color: #495057;
+}
+
+/* Added company header styles */
+.company-header {
+    background: white;
+    border-bottom: 3px solid var(--primary-color);
+    padding: 1.5rem 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.company-logo {
+    text-align: center;
+}
+
+.logo-img {
+    max-height: 80px;
+    width: auto;
+    object-fit: contain;
+}
+
+.company-info {
+    text-align: left;
+}
+
+.company-name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.company-tagline {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 0;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .company-info {
+        text-align: center;
+        margin-top: 1rem;
+    }
+    
+    .company-name {
+        font-size: 1.5rem;
+    }
+    
+    .company-tagline {
+        font-size: 1rem;
+    }
 }
 
 .business-form-container {
@@ -661,6 +791,33 @@ textarea.form-control {
         text-align: left !important;
     }
 }
+
+/* Added styles for phone input groups with country code dropdowns */
+.phone-input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.country-code-select {
+    flex: 0 0 200px;
+    min-width: 200px;
+}
+
+.phone-number-input {
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .phone-input-group {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .country-code-select {
+        flex: 1;
+        min-width: auto;
+    }
+}
 </style>
 
 <script>
@@ -854,6 +1011,43 @@ document.addEventListener('DOMContentLoaded', function() {
             downloadPdfBtn.disabled = false;
             showMessage('PDF download started successfully!', 'success');
         }, 1000);
+    });
+
+    function formatPhoneNumber() {
+        const phoneInputs = document.querySelectorAll('.phone-number-input');
+        phoneInputs.forEach(input => {
+            const countryCodeSelect = input.parentElement.querySelector('.country-code-select');
+            if (countryCodeSelect && countryCodeSelect.value && input.value) {
+                // Combine country code with phone number for submission
+                const fullNumber = countryCodeSelect.value + input.value.replace(/^\+?\d{1,4}/, '');
+                input.setAttribute('data-full-number', fullNumber);
+            }
+        });
+    }
+
+    // Format phone numbers before form submission
+    form.addEventListener('submit', function(e) {
+        formatPhoneNumber();
+        
+        // Update the actual input values with full phone numbers
+        const phoneInputs = document.querySelectorAll('.phone-number-input');
+        phoneInputs.forEach(input => {
+            const countryCodeSelect = input.parentElement.querySelector('.country-code-select');
+            if (countryCodeSelect && countryCodeSelect.value && input.value) {
+                const cleanNumber = input.value.replace(/^\+?\d{1,4}/, '').replace(/\D/g, '');
+                input.value = countryCodeSelect.value + cleanNumber;
+            }
+        });
+    });
+
+    // Handle country code changes
+    document.querySelectorAll('.country-code-select').forEach(select => {
+        select.addEventListener('change', function() {
+            const phoneInput = this.parentElement.querySelector('.phone-number-input');
+            if (phoneInput) {
+                phoneInput.focus();
+            }
+        });
     });
 });
 

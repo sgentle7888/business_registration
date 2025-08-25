@@ -1,6 +1,7 @@
 import frappe
 from frappe import _
 from frappe.utils import now_datetime, add_to_date, get_url
+from frappe.utils.file_manager import save_file  # moved import to top of file
 import json
 import secrets
 
@@ -74,15 +75,29 @@ def create_or_update_registration():
             business_registration = frappe.new_doc("Business Registration")
             business_registration.application_status = "Draft"
         
-        # Update registration fields
+        phone_fields = ['contact_phone_number', 'alternative_phone', 'representative_contact_phone']
+        for phone_field in phone_fields:
+            if phone_field in form_data and form_data.get(phone_field):
+                country_code_field = f"{phone_field}_country_code"
+                phone_number = form_data.get(phone_field)
+                country_code = form_data.get(country_code_field, '+234')  # Default to Nigeria
+                
+                # Format phone number with country code if not already formatted
+                if phone_number and not phone_number.startswith('+'):
+                    # Remove any leading zeros or spaces
+                    phone_number = phone_number.lstrip('0').strip()
+                    formatted_phone = f"{country_code}{phone_number}"
+                    setattr(business_registration, phone_field, formatted_phone)
+                elif phone_number:
+                    setattr(business_registration, phone_field, phone_number)
+        
+        # Update other registration fields
         updateable_fields = [
             'business_name', 'cac_number', 'premises_licence_number', 'annual_turnover',
             'business_type', 'date_of_incorporation', 'address_line1', 'address_line2',
             'address_line3', 'town_or_city', 'local_government', 'state', 'postal_code',
-            'country', 'contact_person', 'contact_phone_number', 'contact_email',
-            'alternative_phone', 'website', 'representative_full_name',
-            'representative_contact_email', 'representative_contact_phone',
-            'representative_designation', 'representative_address',
+            'country', 'contact_person', 'contact_email', 'website', 'representative_full_name',
+            'representative_contact_email', 'representative_designation', 'representative_address',
             'details_of_business_references'
         ]
         
@@ -95,11 +110,12 @@ def create_or_update_registration():
         # Process branch/outlets data
         process_branch_outlets(business_registration, form_data)
         
-        # Handle file attachments
+        business_registration.flags.ignore_permissions = True
+        business_registration.save()
+        
+        # Handle file attachments after document has a name
         handle_file_attachments(business_registration, form_data)
         
-        # Save with system permissions
-        business_registration.flags.ignore_permissions = True
         business_registration.save()
         frappe.db.commit()
         
@@ -185,14 +201,57 @@ def process_branch_outlets(business_registration, form_data):
 def handle_file_attachments(business_registration, form_data):
     """Handle file attachments for the registration"""
     
+    if not business_registration.name:
+        frappe.throw("Document must be saved before attaching files")
+    
     # Handle file uploads if present
     file_fields = ['business_registration_details', 'proof_of_address', 'additional_documents']
     
     for field in file_fields:
-        if field in form_data and form_data[field]:
-            # File handling would be implemented based on your file upload system
-            # This is a placeholder for file attachment logic
-            setattr(business_registration, field, form_data[field])
+        # Check if file was uploaded for this field
+        uploaded_file = frappe.request.files.get(field)
+        
+        if uploaded_file and uploaded_file.filename:
+            try:
+                # Validate file size (5MB limit)
+                max_size = 5 * 1024 * 1024  # 5MB in bytes
+                uploaded_file.seek(0, 2)  # Seek to end
+                file_size = uploaded_file.tell()
+                uploaded_file.seek(0)  # Reset to beginning
+                
+                if file_size > max_size:
+                    frappe.throw(f"File {uploaded_file.filename} is too large. Maximum size is 5MB.")
+                
+                # Validate file type
+                allowed_extensions = ['.pdf', '.jpg', '.jpeg', '.png']
+                file_extension = '.' + uploaded_file.filename.split('.')[-1].lower()
+                
+                if file_extension not in allowed_extensions:
+                    frappe.throw(f"File type {file_extension} not allowed. Please upload PDF, JPG, or PNG files only.")
+                
+                file_doc = save_file(
+                    fname=uploaded_file.filename,
+                    content=uploaded_file.read(),
+                    dt="Business Registration",
+                    dn=str(business_registration.name),  # Ensure name is string
+                    folder=None,
+                    decode=False,
+                    is_private=1
+                )
+                
+                # Set the file URL in the business registration document
+                setattr(business_registration, field, file_doc.file_url)
+                
+            except Exception as e:
+                frappe.log_error(f"File upload error for {field}: {str(e)}")
+                frappe.throw(f"Error uploading {field}: {str(e)}")
+        
+        # If no new file uploaded but field exists in form_data, keep existing value
+        elif field in form_data and form_data[field]:
+            # This handles cases where the field already has a value and we're updating other fields
+            existing_value = getattr(business_registration, field, None)
+            if existing_value:
+                setattr(business_registration, field, existing_value)
 
 def validate_registration_for_submission(business_registration):
     """Validate registration before submission"""
