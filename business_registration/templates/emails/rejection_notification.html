@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Registration Application Update</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #dc3545 0%, #b02a37 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 300;
+        }
+        .content {
+            padding: 30px;
+        }
+        .business-details {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .info-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .info-table td:first-child {
+            font-weight: 600;
+            color: #495057;
+            width: 40%;
+        }
+        .rejection-reason {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+        .next-steps {
+            background-color: #e7f3ff;
+            border-left: 4px solid #0dcaf0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+        .action-button {
+            display: inline-block;
+            background-color: #dc3545;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>📋 Application Update Required</h1>
+            <p>Business Registration Application</p>
+        </div>
+        
+        <div class="content">
+            <p>Dear {{ contact_person }},</p>
+            
+            <p>Thank you for submitting your business registration application. After careful review, we need some additional information or corrections before we can proceed with approval.</p>
+            
+            <div class="business-details">
+                <h3 style="margin-top: 0; color: #333;">Application Details</h3>
+                <table class="info-table">
+                    <tr>
+                        <td>Business Name:</td>
+                        <td><strong>{{ business_name }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>CAC Number:</td>
+                        <td>{{ cac_number }}</td>
+                    </tr>
+                    <tr>
+                        <td>Application ID:</td>
+                        <td><code>{{ application_id }}</code></td>
+                    </tr>
+                    <tr>
+                        <td>Review Date:</td>
+                        <td>{{ review_date }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="rejection-reason">
+                <h3 style="margin-top: 0; color: #856404;">⚠️ Issues to Address</h3>
+                <p><strong>Reason for Review:</strong></p>
+                <div style="background-color: white; padding: 15px; border-radius: 4px; margin-top: 10px;">
+                    {{ rejection_reason or 'Please contact our support team for specific details about the required changes.' }}
+                </div>
+            </div>
+            
+            <div class="next-steps">
+                <h3 style="margin-top: 0; color: #0dcaf0;">📝 What to Do Next</h3>
+                <ol style="margin-bottom: 0;">
+                    <li><strong>Review the feedback</strong> provided above carefully</li>
+                    <li><strong>Make the necessary corrections</strong> to your application</li>
+                    <li><strong>Resubmit your application</strong> with the updated information</li>
+                    <li><strong>Contact us</strong> if you need clarification on any points</li>
+                </ol>
+            </div>
+            
+            {% if form_url %}
+            <div style="text-align: center;">
+                <a href="{{ form_url }}" class="action-button">Update Application</a>
+            </div>
+            {% endif %}
+            
+            <p><strong>Important:</strong> You can update your existing application rather than creating a new one. Your application ID remains the same.</p>
+            
+            <p>We appreciate your patience and look forward to processing your corrected application. If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Business Registration Team</strong></p>
+            <p>{{ company_name or 'Business Registration System' }}</p>
+            <p>Need help? Contact our support team for assistance.</p>
+        </div>
+    </div>
+</body>
+</html>
