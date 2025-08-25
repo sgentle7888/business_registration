@@ -1,0 +1,178 @@
+{
+  "actions": [],
+  "allow_rename": 1,
+  "autoname": "field:workflow_name",
+  "creation": "2025-01-08 12:00:00.000000",
+  "doctype": "DocType",
+  "document_type": "Business Registration",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "workflow_name",
+    "is_active",
+    "workflow_state_field",
+    "send_email_alerts",
+    "states",
+    "transitions"
+  ],
+  "fields": [
+    {
+      "fieldname": "workflow_name",
+      "fieldtype": "Data",
+      "label": "Workflow Name",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "default": "1",
+      "fieldname": "is_active",
+      "fieldtype": "Check",
+      "label": "Is Active"
+    },
+    {
+      "fieldname": "workflow_state_field",
+      "fieldtype": "Select",
+      "label": "Workflow State Field",
+      "options": "application_status"
+    },
+    {
+      "default": "1",
+      "fieldname": "send_email_alerts",
+      "fieldtype": "Check",
+      "label": "Send Email Alerts"
+    },
+    {
+      "fieldname": "states",
+      "fieldtype": "Table",
+      "label": "States",
+      "options": "Workflow Document State"
+    },
+    {
+      "fieldname": "transitions",
+      "fieldtype": "Table",
+      "label": "Transitions",
+      "options": "Workflow Transition"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "istable": 0,
+  "links": [],
+  "modified": "2025-01-08 12:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Business Registration",
+  "name": "Business Registration Workflow",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Form Reviewer",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [
+    {
+      "allow_edit": "Business Registration User",
+      "doc_status": "0",
+      "state": "Draft",
+      "style": "Secondary"
+    },
+    {
+      "allow_edit": "Form Reviewer",
+      "doc_status": "1",
+      "state": "Submitted",
+      "style": "Info"
+    },
+    {
+      "allow_edit": "Form Reviewer",
+      "doc_status": "1",
+      "state": "Under Review",
+      "style": "Warning"
+    },
+    {
+      "allow_edit": "Form Reviewer",
+      "doc_status": "1",
+      "state": "Approved",
+      "style": "Success"
+    },
+    {
+      "allow_edit": "Form Reviewer",
+      "doc_status": "1",
+      "state": "Rejected",
+      "style": "Danger"
+    }
+  ],
+  "track_changes": 1,
+  "transitions": [
+    {
+      "action": "Submit",
+      "allowed": "Business Registration User",
+      "condition": "",
+      "next_state": "Submitted",
+      "state": "Draft"
+    },
+    {
+      "action": "Start Review",
+      "allowed": "Form Reviewer",
+      "condition": "",
+      "next_state": "Under Review",
+      "state": "Submitted"
+    },
+    {
+      "action": "Approve",
+      "allowed": "Form Reviewer",
+      "condition": "",
+      "next_state": "Approved",
+      "state": "Under Review"
+    },
+    {
+      "action": "Reject",
+      "allowed": "Form Reviewer",
+      "condition": "",
+      "next_state": "Rejected",
+      "state": "Under Review"
+    },
+    {
+      "action": "Approve",
+      "allowed": "Form Reviewer",
+      "condition": "",
+      "next_state": "Approved",
+      "state": "Submitted"
+    },
+    {
+      "action": "Reject",
+      "allowed": "Form Reviewer",
+      "condition": "",
+      "next_state": "Rejected",
+      "state": "Submitted"
+    },
+    {
+      "action": "Resubmit",
+      "allowed": "Business Registration User",
+      "condition": "",
+      "next_state": "Submitted",
+      "state": "Rejected"
+    }
+  ]
+}
