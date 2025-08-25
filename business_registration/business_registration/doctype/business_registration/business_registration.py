@@ -1,4 +1,4 @@
-# Copyright (c) 2025, Godwin Ariwodo and contributors
+# Copyright (c) 2025, Business Registration App and contributors
 # For license information, please see license.txt
 
 import frappe
@@ -98,12 +98,22 @@ class BusinessRegistration(Document):
     def validate_annual_turnover(self):
         """Validate annual turnover is reasonable"""
         if self.annual_turnover:
-            if self.annual_turnover < 0:
-                frappe.throw(_("Annual Turnover cannot be negative"))
-            
-            # Warning for very high turnover (above 1 billion)
-            if self.annual_turnover > 1000000000:
-                frappe.msgprint(_("Please verify the Annual Turnover amount - it appears to be very high"), alert=True)
+            try:
+                turnover_value = float(self.annual_turnover)
+                
+                if turnover_value < 0:
+                    frappe.throw(_("Annual Turnover cannot be negative"))
+                
+                # Warning for very high turnover (above 1 billion)
+                if turnover_value > 1000000000:
+                    frappe.msgprint(_("Please verify the Annual Turnover amount - it appears to be very high"), alert=True)
+                    
+                # Update the field with the validated numeric value
+                self.annual_turnover = turnover_value
+                
+            except (ValueError, TypeError):
+                frappe.throw(_("Annual Turnover must be a valid number"))
+
     
     def validate_branch_outlets(self):
         """Validate branch/outlets information"""

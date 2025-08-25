@@ -3,8 +3,13 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.workflow.doctype.workflow.workflow import get_workflow_name
 from frappe import _
+
+# Replacement for removed frappe.workflow.doctype.workflow.workflow.get_workflow_name
+def get_workflow_name(doctype: str):
+    """Return workflow name for a given DocType (if any)."""
+    return frappe.get_value("Workflow", {"document_type": doctype}, "name")
+
 
 class BusinessRegistrationWorkflow(Document):
     def validate(self):
@@ -37,6 +42,7 @@ class BusinessRegistrationWorkflow(Document):
             
             if transition.next_state not in state_names:
                 frappe.throw(_("Transition references invalid next state: {0}").format(transition.next_state))
+
 
 def setup_business_registration_workflow():
     """Setup the default business registration workflow"""
@@ -155,6 +161,7 @@ def setup_business_registration_workflow():
     
     frappe.msgprint(_("Business Registration Workflow created successfully"))
 
+
 @frappe.whitelist()
 def get_workflow_actions(docname):
     """Get available workflow actions for a business registration"""
@@ -186,6 +193,7 @@ def get_workflow_actions(docname):
                 })
     
     return available_actions
+
 
 @frappe.whitelist()
 def execute_workflow_action(docname, action):
@@ -239,4 +247,3 @@ def execute_workflow_action(docname, action):
         "message": f"Status changed from '{old_status}' to '{transition.next_state}'",
         "new_state": transition.next_state
     }
-
