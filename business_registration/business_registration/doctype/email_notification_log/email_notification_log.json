@@ -1,0 +1,98 @@
+{
+  "actions": [],
+  "creation": "2025-01-25 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "reference_doctype",
+    "reference_name",
+    "notification_type",
+    "column_break_4",
+    "recipients",
+    "sent_at",
+    "status",
+    "section_break_8",
+    "error_message"
+  ],
+  "fields": [
+    {
+      "fieldname": "reference_doctype",
+      "fieldtype": "Data",
+      "label": "Reference DocType",
+      "reqd": 1
+    },
+    {
+      "fieldname": "reference_name",
+      "fieldtype": "Data",
+      "label": "Reference Name",
+      "reqd": 1
+    },
+    {
+      "fieldname": "notification_type",
+      "fieldtype": "Select",
+      "label": "Notification Type",
+      "options": "reviewer_notification\napproval_notification\nrejection_notification\nreminder_notification\nstatus_update",
+      "reqd": 1
+    },
+    {
+      "fieldname": "column_break_4",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "recipients",
+      "fieldtype": "Text",
+      "label": "Recipients"
+    },
+    {
+      "fieldname": "sent_at",
+      "fieldtype": "Datetime",
+      "label": "Sent At"
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Sent\nFailed\nPending",
+      "default": "Pending"
+    },
+    {
+      "fieldname": "section_break_8",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "error_message",
+      "fieldtype": "Text",
+      "label": "Error Message",
+      "depends_on": "eval:doc.status=='Failed'"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2025-01-25 00:00:00.000000",
+  "module": "Business Registration",
+  "name": "Email Notification Log",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "read": 1,
+      "report": 1,
+      "role": "Form Reviewer"
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1
+}
