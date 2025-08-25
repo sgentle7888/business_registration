@@ -83,7 +83,7 @@ app_license = "mit"
 # ------------
 
 # before_install = "business_registration.install.before_install"
-# after_install = "business_registration.install.after_install"
+after_install = "business_registration.install.after_install"
 
 # Uninstallation
 # ------------
@@ -136,6 +136,14 @@ app_license = "mit"
 # Document Events
 # ---------------
 # Hook on document methods and events
+
+doc_events = {
+    "Business Registration": {
+        "on_update": "business_registration.business_registration.doctype.business_registration.business_registration.on_update_workflow",
+        "on_submit": "business_registration.business_registration.doctype.business_registration.business_registration.on_submit_workflow",
+        "on_cancel": "business_registration.business_registration.doctype.business_registration.business_registration.on_cancel_workflow"
+    }
+}
 
 # doc_events = {
 # 	"*": {
