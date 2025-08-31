@@ -40,33 +40,33 @@ Registration Form{% endblock %} {% block page_content %}
               Fill out the form directly on our website with validation and
               auto-save features.
             </p>
-            <a href="/business-registration" class="btn btn-primary btn-lg">
+            <a href="/business_form" class="btn btn-primary btn-lg">
               <i class="fa fa-edit"></i> Fill Online Form
             </a>
           </div>
 
           <div class="option-card">
-            <h3><i class="fa fa-file-pdf-o"></i> Manual PDF Form</h3>
-            <p>
-              Download and fill the PDF form manually, then upload it for
-              submission.
-            </p>
-            <a
-              href="/api/method/business_registration.www.download_form.generate_empty_form"
-              class="btn btn-outline-info btn-lg"
-              target="_blank"
-            >
-              <i class="fa fa-download"></i> Download Empty PDF
-            </a>
-            <div class="manual-submission-link">
-              <small
-                >After filling:
-                <a href="/business-registration/manual-submission"
-                  >Upload Completed Form</a
-                ></small
-              >
-            </div>
-          </div>
+  <h3><i class="fa fa-file-pdf-o"></i> Manual PDF Form</h3>
+  <p>
+    Download and fill the PDF form manually, then upload it for
+    submission.
+  </p>
+  
+    href="/api/method/business_registration.www.download_form.generate_empty_form"
+    class="btn btn-outline-info btn-lg"
+    target="_blank"
+  >
+    <i class="fa fa-download"></i> Download Empty PDF
+  </a>
+  <div class="manual-submission-link">
+    <small
+      >After filling:
+      <a href="/manual_submission"
+        >Upload Completed Form</a
+      ></small
+    >
+  </div>
+</div>
         </div>
 
         <!-- Instructions -->
