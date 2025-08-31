@@ -1,9 +1,11 @@
 import frappe
 from frappe import _
 from frappe.utils import now_datetime, add_to_date, get_url
-from frappe.utils.file_manager import save_file  # moved import to top of file
+from frappe.utils.file_manager import save_file
 import json
 import secrets
+import re
+
 
 def get_context(context):
     """Get context for business registration form - supports guest access"""
@@ -26,6 +28,15 @@ def get_context(context):
         business_registration = frappe.new_doc("Business Registration")
         business_registration.application_status = "Draft"
     
+    # Get company name safely
+    company_name = "Business Registration Authority"
+    try:
+        companies = frappe.get_all("Company", fields=["company_name"], limit=1)
+        if companies:
+            company_name = companies[0].company_name
+    except Exception:
+        pass  # Use default if Company doctype doesn't exist
+    
     # Get dropdown options
     business_types = [
         "Limited Liability Company",
@@ -44,127 +55,117 @@ def get_context(context):
         "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara"
     ]
     
+    # Set context variables
     context.business_registration = business_registration
     context.is_guest = is_guest
     context.business_types = business_types
     context.nigerian_states = nigerian_states
+    context.company_name = company_name
     context.title = _("Business Registration Application")
     context.no_cache = 1
     
     return context
 
+
 @frappe.whitelist(allow_guest=True)
-def create_or_update_registration():
-    """Handle business registration form submission - supports guest access"""
+def submit_registration_data():
+    """Submit registration data and files at once"""
     
     try:
         form_data = frappe.form_dict
-        registration_id = form_data.get('registration_id')
         
-        if registration_id:
-            # Update existing registration
-            try:
-                business_registration = frappe.get_doc("Business Registration", registration_id)
-                # Only allow editing if status is Draft or Rejected
-                if business_registration.application_status not in ['Draft', 'Rejected']:
-                    return {"status": "error", "message": "This application cannot be edited as it has been submitted for review"}
-            except frappe.DoesNotExistError:
-                return {"status": "error", "message": "Business registration not found"}
-        else:
-            # Create new registration
-            business_registration = frappe.new_doc("Business Registration")
-            business_registration.application_status = "Draft"
+        # Create new registration
+        business_registration = frappe.new_doc("Business Registration")
+        business_registration.application_status = "Under Review"
         
-        phone_fields = ['contact_phone_number', 'alternative_phone', 'representative_contact_phone']
-        for phone_field in phone_fields:
-            if phone_field in form_data and form_data.get(phone_field):
-                country_code_field = f"{phone_field}_country_code"
-                phone_number = form_data.get(phone_field)
-                country_code = form_data.get(country_code_field, '+234')  # Default to Nigeria
-                
-                # Format phone number with country code if not already formatted
-                if phone_number and not phone_number.startswith('+'):
-                    # Remove any leading zeros or spaces
-                    phone_number = phone_number.lstrip('0').strip()
-                    formatted_phone = f"{country_code}{phone_number}"
-                    setattr(business_registration, phone_field, formatted_phone)
-                elif phone_number:
-                    setattr(business_registration, phone_field, phone_number)
+        # Process phone numbers with country codes
+        _process_phone_numbers(business_registration, form_data)
         
-        # Update other registration fields
-        updateable_fields = [
-            'business_name', 'cac_number', 'premises_licence_number', 'annual_turnover',
-            'business_type', 'date_of_incorporation', 'address_line1', 'address_line2',
-            'address_line3', 'town_or_city', 'local_government', 'state', 'postal_code',
-            'country', 'contact_person', 'contact_email', 'website', 'representative_full_name',
-            'representative_contact_email', 'representative_designation', 'representative_address',
-            'details_of_business_references'
-        ]
-        
-        for field in updateable_fields:
-            if field in form_data and hasattr(business_registration, field):
-                value = form_data.get(field)
-                if value:
-                    setattr(business_registration, field, value)
+        # Update basic fields
+        _update_basic_fields(business_registration, form_data)
         
         # Process branch/outlets data
-        process_branch_outlets(business_registration, form_data)
+        _process_branch_outlets(business_registration, form_data)
         
+        # Set submission timestamp
+        business_registration.submission_date = now_datetime()
+        business_registration.review_date = now_datetime()
+        
+        # Insert document first (creates the name/ID)
         business_registration.flags.ignore_permissions = True
-        business_registration.save()
+        business_registration.insert()  # Use insert() instead of save() for new docs
         
-        # Handle file attachments after document has a name
-        handle_file_attachments(business_registration, form_data)
+        # NOW handle file attachments after document exists
+        _handle_file_attachments(business_registration, form_data)
         
-        business_registration.save()
+        # Validate for submission after files are attached
+        validation_errors = _validate_registration_for_submission(business_registration)
+        if validation_errors:
+            # If validation fails, delete the created document
+            frappe.delete_doc("Business Registration", business_registration.name, force=True)
+            frappe.db.commit()
+            return {
+                "status": "error", 
+                "message": "Please complete all required fields", 
+                "errors": validation_errors
+            }
+        
+        # Submit the document (equivalent to changing docstatus to 1)
+        business_registration.submit()
         frappe.db.commit()
         
         return {
-            "status": "success", 
-            "message": "Registration saved successfully",
+            "status": "success",
+            "message": "Application submitted successfully and is now under review. You will receive email notifications about the review status.",
             "registration_id": business_registration.name,
             "registration_name": business_registration.business_name
-        }
-        
-    except Exception as e:
-        frappe.log_error(frappe.get_traceback(), "Business Registration Create/Update Error")
-        return {"status": "error", "message": str(e)}
-
-@frappe.whitelist(allow_guest=True)
-def submit_registration():
-    """Submit registration for review"""
-    
-    try:
-        registration_id = frappe.form_dict.get('registration_id')
-        
-        if not registration_id:
-            return {"status": "error", "message": "Registration ID is required"}
-        
-        business_registration = frappe.get_doc("Business Registration", registration_id)
-        
-        # Validate required fields before submission
-        validation_errors = validate_registration_for_submission(business_registration)
-        if validation_errors:
-            return {"status": "error", "message": "Please complete all required fields", "errors": validation_errors}
-        
-        # Update status to Submitted
-        business_registration.application_status = "Submitted"
-        business_registration.submission_date = now_datetime()
-        business_registration.flags.ignore_permissions = True
-        business_registration.save()
-        frappe.db.commit()
-        
-        return {
-            "status": "success", 
-            "message": "Application submitted successfully. You will receive email notifications about the review status.",
-            "registration_id": business_registration.name
         }
         
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Business Registration Submission Error")
         return {"status": "error", "message": str(e)}
 
-def process_branch_outlets(business_registration, form_data):
+def _process_phone_numbers(business_registration, form_data):
+    """Process phone numbers with country codes"""
+    
+    phone_fields = ['contact_phone_number', 'alternative_phone', 'representative_contact_phone']
+    
+    for phone_field in phone_fields:
+        if phone_field in form_data and form_data.get(phone_field):
+            country_code_field = f"{phone_field}_country_code"
+            phone_number = form_data.get(phone_field)
+            country_code = form_data.get(country_code_field, '+234')
+            
+            # Format phone number with country code
+            if phone_number and not phone_number.startswith('+'):
+                # Clean the phone number
+                clean_phone = re.sub(r'\D', '', phone_number.lstrip('0'))
+                formatted_phone = f"{country_code}{clean_phone}"
+                setattr(business_registration, phone_field, formatted_phone)
+            elif phone_number:
+                setattr(business_registration, phone_field, phone_number)
+
+
+def _update_basic_fields(business_registration, form_data):
+    """Update basic registration fields"""
+    
+    updateable_fields = [
+        'business_name', 'cac_number', 'premises_licence_number', 'annual_turnover',
+        'business_type', 'date_of_incorporation', 'address_line1', 'address_line2',
+        'address_line3', 'town_or_city', 'local_government', 'state', 'postal_code',
+        'country', 'contact_person', 'contact_email', 'website', 'representative_full_name',
+        'representative_contact_email', 'representative_designation', 'representative_address',
+        'details_of_business_references'
+    ]
+    
+    for field in updateable_fields:
+        if field in form_data and hasattr(business_registration, field):
+            value = form_data.get(field)
+            if value:
+                setattr(business_registration, field, value)
+
+
+def _process_branch_outlets(business_registration, form_data):
     """Process branch/outlets data from form"""
     
     # Clear existing branches
@@ -176,8 +177,6 @@ def process_branch_outlets(business_registration, form_data):
     # Extract branch data from form_data
     for key, value in form_data.items():
         if key.startswith('branch_outlets[') and value:
-            # Parse key like 'branch_outlets[0][branch_name]'
-            import re
             match = re.match(r'branch_outlets\[(\d+)\]\[(\w+)\]', key)
             if match:
                 index = int(match.group(1))
@@ -198,26 +197,26 @@ def process_branch_outlets(business_registration, form_data):
             branch_row.branch_name = branch_data['branch_name']
             branch_row.branch_address = branch_data['branch_address']
 
-def handle_file_attachments(business_registration, form_data):
+
+def _handle_file_attachments(business_registration, form_data):
     """Handle file attachments for the registration"""
     
-    if not business_registration.name:
-        frappe.throw("Document must be saved before attaching files")
+    # Remove this line since document will already exist when we call this function
+    # if not business_registration.name:
+    #     frappe.throw("Document must be saved before attaching files")
     
-    # Handle file uploads if present
     file_fields = ['business_registration_details', 'proof_of_address', 'additional_documents']
     
     for field in file_fields:
-        # Check if file was uploaded for this field
         uploaded_file = frappe.request.files.get(field)
         
         if uploaded_file and uploaded_file.filename:
             try:
                 # Validate file size (5MB limit)
-                max_size = 5 * 1024 * 1024  # 5MB in bytes
-                uploaded_file.seek(0, 2)  # Seek to end
+                max_size = 5 * 1024 * 1024  # 5MB
+                uploaded_file.seek(0, 2)
                 file_size = uploaded_file.tell()
-                uploaded_file.seek(0)  # Reset to beginning
+                uploaded_file.seek(0)
                 
                 if file_size > max_size:
                     frappe.throw(f"File {uploaded_file.filename} is too large. Maximum size is 5MB.")
@@ -229,31 +228,25 @@ def handle_file_attachments(business_registration, form_data):
                 if file_extension not in allowed_extensions:
                     frappe.throw(f"File type {file_extension} not allowed. Please upload PDF, JPG, or PNG files only.")
                 
+                # Save the file
                 file_doc = save_file(
                     fname=uploaded_file.filename,
                     content=uploaded_file.read(),
                     dt="Business Registration",
-                    dn=str(business_registration.name),  # Ensure name is string
+                    dn=str(business_registration.name),
                     folder=None,
                     decode=False,
                     is_private=1
                 )
                 
-                # Set the file URL in the business registration document
+                # Set the file URL in the document
                 setattr(business_registration, field, file_doc.file_url)
                 
             except Exception as e:
                 frappe.log_error(f"File upload error for {field}: {str(e)}")
                 frappe.throw(f"Error uploading {field}: {str(e)}")
-        
-        # If no new file uploaded but field exists in form_data, keep existing value
-        elif field in form_data and form_data[field]:
-            # This handles cases where the field already has a value and we're updating other fields
-            existing_value = getattr(business_registration, field, None)
-            if existing_value:
-                setattr(business_registration, field, existing_value)
 
-def validate_registration_for_submission(business_registration):
+def _validate_registration_for_submission(business_registration):
     """Validate registration before submission"""
     
     errors = []
@@ -281,6 +274,7 @@ def validate_registration_for_submission(business_registration):
             errors.append(label)
     
     return errors
+
 
 @frappe.whitelist(allow_guest=True)
 def get_registration_status():

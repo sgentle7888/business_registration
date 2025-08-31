@@ -93,18 +93,6 @@
   "sort_order": "DESC",
   "states": [
     {
-      "allow_edit": "Business Registration User",
-      "doc_status": "0",
-      "state": "Draft",
-      "style": "Secondary"
-    },
-    {
-      "allow_edit": "Form Reviewer",
-      "doc_status": "1",
-      "state": "Submitted",
-      "style": "Info"
-    },
-    {
       "allow_edit": "Form Reviewer",
       "doc_status": "1",
       "state": "Under Review",
@@ -123,55 +111,26 @@
       "style": "Danger"
     }
   ],
-  "track_changes": 1,
   "transitions": [
     {
-      "action": "Submit",
-      "allowed": "Business Registration User",
+      "action": "Approve",
+      "allowed": "Form Reviewer",
       "condition": "",
-      "next_state": "Submitted",
-      "state": "Draft"
+      "next_state": "Approved",
+      "state": "Under Review"
     },
     {
-      "action": "Start Review",
+      "action": "Reject",
+      "allowed": "Form Reviewer",
+      "condition": "",
+      "next_state": "Rejected",
+      "state": "Under Review"
+    },
+    {
+      "action": "Re-review",
       "allowed": "Form Reviewer",
       "condition": "",
       "next_state": "Under Review",
-      "state": "Submitted"
-    },
-    {
-      "action": "Approve",
-      "allowed": "Form Reviewer",
-      "condition": "",
-      "next_state": "Approved",
-      "state": "Under Review"
-    },
-    {
-      "action": "Reject",
-      "allowed": "Form Reviewer",
-      "condition": "",
-      "next_state": "Rejected",
-      "state": "Under Review"
-    },
-    {
-      "action": "Approve",
-      "allowed": "Form Reviewer",
-      "condition": "",
-      "next_state": "Approved",
-      "state": "Submitted"
-    },
-    {
-      "action": "Reject",
-      "allowed": "Form Reviewer",
-      "condition": "",
-      "next_state": "Rejected",
-      "state": "Submitted"
-    },
-    {
-      "action": "Resubmit",
-      "allowed": "Business Registration User",
-      "condition": "",
-      "next_state": "Submitted",
       "state": "Rejected"
     }
   ]

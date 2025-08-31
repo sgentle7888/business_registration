@@ -4,18 +4,16 @@
 
 {% block page_content %}
 <div class="business-form-container">
-    <!-- Added company header section with logo and name -->
+    <!-- Company Header -->
     <div class="company-header">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-3">
-                    <div class="company-logo">
-                        <img src="/assets/business_registration/images/company-logo.png" alt="Company Logo" class="logo-img">
+            <div class="row justify-content-center">
+                <div class="col-12 text-center">
+                    <div class="company-logo mb-3">
+                        <img src="/files/logo.png" alt="Company Logo" class="logo-img">
                     </div>
-                </div>
-                <div class="col-md-9">
                     <div class="company-info">
-                        <h2 class="company-name">Business Registration Authority</h2>
+                        <h2 class="company-name">{{ company_name }}</h2>
                         <p class="company-tagline">Streamlining Business Registration Process</p>
                     </div>
                 </div>
@@ -23,6 +21,7 @@
         </div>
     </div>
     
+    <!-- Form Header -->
     <div class="form-header">
         <div class="container">
             <div class="row">
@@ -43,7 +42,6 @@
             </div>
 
             <form id="business-registration-form" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
-                <input type="hidden" name="cmd" value="business_registration.www.business_form.create_or_update_registration">
                 {% if business_registration.name %}
                 <input type="hidden" name="registration_id" value="{{ business_registration.name }}">
                 {% endif %}
@@ -58,23 +56,25 @@
                             <i class="fa fa-info-circle"></i>
                             Please provide accurate business information. All fields marked with * are required.
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="business_name">Business Name</label>
+                                    <label for="business_name" class="required">Business Name</label>
                                     <input type="text" class="form-control" name="business_name" id="business_name" 
                                            value="{{ business_registration.business_name or '' }}" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="cac_number">CAC Number</label>
+                                    <label for="cac_number" class="required">CAC Number</label>
                                     <input type="text" class="form-control" name="cac_number" id="cac_number" 
                                            value="{{ business_registration.cac_number or '' }}" required
                                            placeholder="e.g., RC123456, BN123456">
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -89,7 +89,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="annual_turnover">Annual Turnover (₦)</label>
+                                    <label for="annual_turnover" class="required">Annual Turnover (₦)</label>
                                     <input type="number" class="form-control" name="annual_turnover" id="annual_turnover" 
                                            value="{{ business_registration.annual_turnover or '' }}" required
                                            min="0" step="0.01">
@@ -103,6 +103,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -132,12 +133,13 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="address_line1">Address Line 1</label>
+                                    <label for="address_line1" class="required">Address Line 1</label>
                                     <input type="text" class="form-control" name="address_line1" id="address_line1" 
                                            value="{{ business_registration.address_line1 or '' }}" required>
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -154,17 +156,18 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="town_or_city">Town/City</label>
+                                    <label for="town_or_city" class="required">Town/City</label>
                                     <input type="text" class="form-control" name="town_or_city" id="town_or_city" 
                                            value="{{ business_registration.town_or_city or '' }}" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="state">State</label>
+                                    <label for="state" class="required">State</label>
                                     <select class="form-control" name="state" id="state" required>
                                         <option value="">Select State</option>
                                         {% for state in nigerian_states %}
@@ -181,6 +184,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -209,43 +213,39 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="contact_person">Contact Person</label>
+                                    <label for="contact_person" class="required">Contact Person</label>
                                     <input type="text" class="form-control" name="contact_person" id="contact_person" 
                                            value="{{ business_registration.contact_person or '' }}" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="contact_email">Contact Email</label>
+                                    <label for="contact_email" class="required">Contact Email</label>
                                     <input type="email" class="form-control" name="contact_email" id="contact_email" 
                                            value="{{ business_registration.contact_email or '' }}" required>
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="contact_phone_number">Contact Phone Number</label>
-                                    <!-- Added country code dropdown for phone number -->
+                                    <label for="contact_phone_number" class="required">Contact Phone Number</label>
                                     <div class="phone-input-group">
-                                        <select class="form-control country-code-select" name="contact_phone_country_code" id="contact_phone_country_code" required>
+                                        <select class="form-control country-code-select" name="contact_phone_number_country_code" id="contact_phone_country_code" required>
                                             <option value="">Select Country</option>
-                                            <option value="+93" data-country="Afghanistan" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+93') %}selected{% endif %}>🇦🇫 Afghanistan (+93)</option>
-                                            <option value="+355" data-country="Albania" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+355') %}selected{% endif %}>🇦🇱 Albania (+355)</option>
-                                            <option value="+213" data-country="Algeria" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+213') %}selected{% endif %}>🇩🇿 Algeria (+213)</option>
-                                            <option value="+1" data-country="United States" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+1') %}selected{% endif %}>🇺🇸 United States (+1)</option>
-                                            <option value="+44" data-country="United Kingdom" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+44') %}selected{% endif %}>🇬🇧 United Kingdom (+44)</option>
-                                            <option value="+234" data-country="Nigeria" {% if not business_registration.contact_phone_number or business_registration.contact_phone_number.startswith('+234') %}selected{% endif %}>🇳🇬 Nigeria (+234)</option>
-                                            <option value="+27" data-country="South Africa" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+27') %}selected{% endif %}>🇿🇦 South Africa (+27)</option>
-                                            <option value="+254" data-country="Kenya" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+254') %}selected{% endif %}>🇰🇪 Kenya (+254)</option>
-                                            <option value="+233" data-country="Ghana" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+233') %}selected{% endif %}>🇬🇭 Ghana (+233)</option>
-                                            <option value="+91" data-country="India" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+91') %}selected{% endif %}>🇮🇳 India (+91)</option>
-                                            <option value="+86" data-country="China" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+86') %}selected{% endif %}>🇨🇳 China (+86)</option>
-                                            <option value="+33" data-country="France" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+33') %}selected{% endif %}>🇫🇷 France (+33)</option>
-                                            <option value="+49" data-country="Germany" {% if business_registration.contact_phone_number and business_registration.contact_phone_number.startswith('+49') %}selected{% endif %}>🇩🇪 Germany (+49)</option>
+                                            <option value="+234" data-country="Nigeria" selected>🇳🇬 Nigeria (+234)</option>
+                                            <option value="+1" data-country="United States">🇺🇸 United States (+1)</option>
+                                            <option value="+44" data-country="United Kingdom">🇬🇧 United Kingdom (+44)</option>
+                                            <option value="+91" data-country="India">🇮🇳 India (+91)</option>
+                                            <option value="+86" data-country="China">🇨🇳 China (+86)</option>
+                                            <option value="+33" data-country="France">🇫🇷 France (+33)</option>
+                                            <option value="+49" data-country="Germany">🇩🇪 Germany (+49)</option>
+                                            <option value="+27" data-country="South Africa">🇿🇦 South Africa (+27)</option>
+                                            <option value="+254" data-country="Kenya">🇰🇪 Kenya (+254)</option>
+                                            <option value="+233" data-country="Ghana">🇬🇭 Ghana (+233)</option>
                                         </select>
                                         <input type="tel" class="form-control phone-number-input" name="contact_phone_number" id="contact_phone_number" 
-                                               value="{{ business_registration.contact_phone_number.replace('+234', '').replace('+1', '').replace('+44', '').replace('+91', '').replace('+86', '').replace('+33', '').replace('+49', '').replace('+27', '').replace('+254', '').replace('+233', '') if business_registration.contact_phone_number else '' }}" 
                                                placeholder="Enter phone number" required>
                                     </div>
                                 </div>
@@ -253,26 +253,21 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="alternative_phone">Alternative Phone</label>
-                                    <!-- Added country code dropdown for alternative phone -->
                                     <div class="phone-input-group">
                                         <select class="form-control country-code-select" name="alternative_phone_country_code" id="alternative_phone_country_code">
                                             <option value="">Select Country</option>
-                                            <option value="+93" data-country="Afghanistan">🇦🇫 Afghanistan (+93)</option>
-                                            <option value="+355" data-country="Albania">🇦🇱 Albania (+355)</option>
-                                            <option value="+213" data-country="Algeria">🇩🇿 Algeria (+213)</option>
+                                            <option value="+234" data-country="Nigeria" selected>🇳🇬 Nigeria (+234)</option>
                                             <option value="+1" data-country="United States">🇺🇸 United States (+1)</option>
                                             <option value="+44" data-country="United Kingdom">🇬🇧 United Kingdom (+44)</option>
-                                            <option value="+234" data-country="Nigeria" selected>🇳🇬 Nigeria (+234)</option>
-                                            <option value="+27" data-country="South Africa">🇿🇦 South Africa (+27)</option>
-                                            <option value="+254" data-country="Kenya">🇰🇪 Kenya (+254)</option>
-                                            <option value="+233" data-country="Ghana">🇬🇭 Ghana (+233)</option>
                                             <option value="+91" data-country="India">🇮🇳 India (+91)</option>
                                             <option value="+86" data-country="China">🇨🇳 China (+86)</option>
                                             <option value="+33" data-country="France">🇫🇷 France (+33)</option>
                                             <option value="+49" data-country="Germany">🇩🇪 Germany (+49)</option>
+                                            <option value="+27" data-country="South Africa">🇿🇦 South Africa (+27)</option>
+                                            <option value="+254" data-country="Kenya">🇰🇪 Kenya (+254)</option>
+                                            <option value="+233" data-country="Ghana">🇬🇭 Ghana (+233)</option>
                                         </select>
                                         <input type="tel" class="form-control phone-number-input" name="alternative_phone" id="alternative_phone" 
-                                               value="{{ business_registration.alternative_phone.replace('+234', '').replace('+1', '').replace('+44', '').replace('+91', '').replace('+86', '').replace('+33', '').replace('+49', '').replace('+27', '').replace('+254', '').replace('+233', '') if business_registration.alternative_phone else '' }}" 
                                                placeholder="Enter phone number">
                                     </div>
                                 </div>
@@ -290,7 +285,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="representative_full_name">Representative Full Name</label>
+                                    <label for="representative_full_name" class="required">Representative Full Name</label>
                                     <input type="text" class="form-control" name="representative_full_name" id="representative_full_name" 
                                            value="{{ business_registration.representative_full_name or '' }}" required>
                                 </div>
@@ -303,42 +298,39 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="representative_contact_email">Representative Contact Email</label>
+                                    <label for="representative_contact_email" class="required">Representative Contact Email</label>
                                     <input type="email" class="form-control" name="representative_contact_email" id="representative_contact_email" 
                                            value="{{ business_registration.representative_contact_email or '' }}" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="representative_contact_phone">Representative Contact Phone</label>
-                                    <!-- Added country code dropdown for representative phone -->
+                                    <label for="representative_contact_phone" class="required">Representative Contact Phone</label>
                                     <div class="phone-input-group">
                                         <select class="form-control country-code-select" name="representative_contact_phone_country_code" id="representative_contact_phone_country_code" required>
                                             <option value="">Select Country</option>
-                                            <option value="+93" data-country="Afghanistan">🇦🇫 Afghanistan (+93)</option>
-                                            <option value="+355" data-country="Albania">🇦🇱 Albania (+355)</option>
-                                            <option value="+213" data-country="Algeria">🇩🇿 Algeria (+213)</option>
+                                            <option value="+234" data-country="Nigeria" selected>🇳🇬 Nigeria (+234)</option>
                                             <option value="+1" data-country="United States">🇺🇸 United States (+1)</option>
                                             <option value="+44" data-country="United Kingdom">🇬🇧 United Kingdom (+44)</option>
-                                            <option value="+234" data-country="Nigeria" selected>🇳🇬 Nigeria (+234)</option>
-                                            <option value="+27" data-country="South Africa">🇿🇦 South Africa (+27)</option>
-                                            <option value="+254" data-country="Kenya">🇰🇪 Kenya (+254)</option>
-                                            <option value="+233" data-country="Ghana">🇬🇭 Ghana (+233)</option>
                                             <option value="+91" data-country="India">🇮🇳 India (+91)</option>
                                             <option value="+86" data-country="China">🇨🇳 China (+86)</option>
                                             <option value="+33" data-country="France">🇫🇷 France (+33)</option>
                                             <option value="+49" data-country="Germany">🇩🇪 Germany (+49)</option>
+                                            <option value="+27" data-country="South Africa">🇿🇦 South Africa (+27)</option>
+                                            <option value="+254" data-country="Kenya">🇰🇪 Kenya (+254)</option>
+                                            <option value="+233" data-country="Ghana">🇬🇭 Ghana (+233)</option>
                                         </select>
                                         <input type="tel" class="form-control phone-number-input" name="representative_contact_phone" id="representative_contact_phone" 
-                                               value="{{ business_registration.representative_contact_phone.replace('+234', '').replace('+1', '').replace('+44', '').replace('+91', '').replace('+86', '').replace('+33', '').replace('+49', '').replace('+27', '').replace('+254', '').replace('+233', '') if business_registration.representative_contact_phone else '' }}" 
                                                placeholder="Enter phone number" required>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -432,7 +424,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="business_registration_details">Business Registration Details</label>
+                                    <label for="business_registration_details" class="required">Business Registration Details</label>
                                     <input type="file" class="form-control-file" name="business_registration_details" id="business_registration_details" 
                                            accept=".pdf,.jpg,.jpeg,.png" required>
                                     <small class="form-text text-muted">Upload CAC certificate or business registration documents</small>
@@ -440,7 +432,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="proof_of_address">Proof of Address</label>
+                                    <label for="proof_of_address" class="required">Proof of Address</label>
                                     <input type="file" class="form-control-file" name="proof_of_address" id="proof_of_address" 
                                            accept=".pdf,.jpg,.jpeg,.png" required>
                                     <small class="form-text text-muted">Upload utility bill, lease agreement, or other proof of business address</small>
@@ -463,20 +455,14 @@
                 <!-- Form Actions -->
                 <div class="form-actions">
                     <div class="row">
-                        <div class="col-md-4">
-                            <button type="submit" id="save-btn" class="btn btn-outline-primary btn-lg">
-                                <i class="fa fa-save"></i> Save Draft
-                            </button>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <!-- Added PDF download button -->
-                            <button type="button" id="download-pdf-btn" class="btn btn-outline-info btn-lg" style="display: none;">
-                                <i class="fa fa-file-pdf-o"></i> Download PDF
-                            </button>
-                        </div>
-                        <div class="col-md-4 text-right">
+                        <div class="col-md-6 text-center">
                             <button type="button" id="submit-btn" class="btn btn-success btn-lg">
                                 <i class="fa fa-paper-plane"></i> Submit Application
+                            </button>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <button type="button" id="download-pdf-btn" class="btn btn-outline-info btn-lg" style="display: none;">
+                                <i class="fa fa-file-pdf-o"></i> Download PDF
                             </button>
                         </div>
                     </div>
@@ -493,6 +479,7 @@
     </div>
 </div>
 
+<!-- Styling -->
 <style>
 :root {
     --primary-color: #2c5aa0;
@@ -505,30 +492,27 @@
     --text-color: #495057;
 }
 
-/* Added company header styles */
+.business-form-container {
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding-bottom: 2rem;
+}
+
 .company-header {
     background: white;
     border-bottom: 3px solid var(--primary-color);
-    padding: 1.5rem 0;
+    padding: 2rem 0;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.company-logo {
-    text-align: center;
-}
-
 .logo-img {
-    max-height: 80px;
+    max-height: 100px;
     width: auto;
     object-fit: contain;
 }
 
-.company-info {
-    text-align: left;
-}
-
 .company-name {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: var(--primary-color);
     margin-bottom: 0.5rem;
@@ -539,27 +523,6 @@
     color: var(--text-color);
     margin-bottom: 0;
     font-style: italic;
-}
-
-@media (max-width: 768px) {
-    .company-info {
-        text-align: center;
-        margin-top: 1rem;
-    }
-    
-    .company-name {
-        font-size: 1.5rem;
-    }
-    
-    .company-tagline {
-        font-size: 1rem;
-    }
-}
-
-.business-form-container {
-    background: #f0f2f5;
-    min-height: 100vh;
-    padding-bottom: 2rem;
 }
 
 .form-header {
@@ -666,17 +629,18 @@
     box-shadow: 0 0 0 0.25rem rgba(44, 90, 160, 0.25);
 }
 
-.form-control-file {
-    display: block;
-    width: 100%;
-    padding: 0.5rem 0;
-    font-size: 0.9rem;
-    color: var(--text-color);
+.phone-input-group {
+    display: flex;
+    gap: 0.5rem;
 }
 
-textarea.form-control {
-    resize: vertical;
-    min-height: 100px;
+.country-code-select {
+    flex: 0 0 200px;
+    min-width: 200px;
+}
+
+.phone-number-input {
+    flex: 1;
 }
 
 .branch-row {
@@ -706,6 +670,7 @@ textarea.form-control {
     transition: all 0.2s ease;
     text-decoration: none;
     border: 2px solid transparent;
+    cursor: pointer;
 }
 
 .btn i {
@@ -717,15 +682,15 @@ textarea.form-control {
     font-size: 1.1rem;
 }
 
-.btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
     color: white;
 }
 
-.btn-primary:hover {
-    background-color: #1a365d;
-    border-color: #1a365d;
+.btn-success:hover:not(:disabled) {
+    background-color: #146c43;
+    border-color: #146c43;
     transform: translateY(-1px);
 }
 
@@ -735,21 +700,20 @@ textarea.form-control {
     background-color: transparent;
 }
 
-.btn-outline-primary:hover {
+.btn-outline-primary:hover:not(:disabled) {
     background-color: var(--primary-color);
     color: white;
 }
 
-.btn-success {
-    background-color: var(--success-color);
-    border-color: var(--success-color);
-    color: white;
+.btn-outline-info {
+    color: var(--info-color);
+    border-color: var(--info-color);
+    background-color: transparent;
 }
 
-.btn-success:hover {
-    background-color: #146c43;
-    border-color: #146c43;
-    transform: translateY(-1px);
+.btn-outline-info:hover:not(:disabled) {
+    background-color: var(--info-color);
+    color: white;
 }
 
 .btn-outline-danger {
@@ -758,7 +722,7 @@ textarea.form-control {
     background-color: transparent;
 }
 
-.btn-outline-danger:hover {
+.btn-outline-danger:hover:not(:disabled) {
     background-color: var(--danger-color);
     color: white;
 }
@@ -782,32 +746,6 @@ textarea.form-control {
         padding: 1.5rem;
     }
     
-    .form-actions .btn {
-        width: 100%;
-        margin-bottom: 1rem;
-    }
-    
-    .form-actions .text-right {
-        text-align: left !important;
-    }
-}
-
-/* Added styles for phone input groups with country code dropdowns */
-.phone-input-group {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.country-code-select {
-    flex: 0 0 200px;
-    min-width: 200px;
-}
-
-.phone-number-input {
-    flex: 1;
-}
-
-@media (max-width: 768px) {
     .phone-input-group {
         flex-direction: column;
         gap: 0.75rem;
@@ -817,277 +755,314 @@ textarea.form-control {
         flex: 1;
         min-width: auto;
     }
+    
+    .form-actions .btn {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .company-name {
+        font-size: 1.5rem;
+    }
+    
+    .company-tagline {
+        font-size: 1rem;
+    }
 }
 </style>
 
 <script>
-let branchIndex = {{ business_registration.branch_outlets|length if business_registration.branch_outlets else 0 }};
-let currentRegistrationId = {{ '"' + business_registration.name + '"' if business_registration.name else 'null' }};
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Add required asterisks to labels
-    document.querySelectorAll('input[required], select[required], textarea[required]').forEach(function(el) {
-        const formGroup = el.closest('.form-group');
-        if (formGroup) {
-            const label = formGroup.querySelector('label');
-            if (label) {
-                label.classList.add('required');
-            }
-        }
-    });
-
-    const form = document.getElementById('business-registration-form');
-    const saveBtn = document.getElementById('save-btn');
-    const submitBtn = document.getElementById('submit-btn');
-    const downloadPdfBtn = document.getElementById('download-pdf-btn');
-    const messageContainer = document.getElementById('message-container');
-    const messageAlert = document.getElementById('message-alert');
-
-    if (currentRegistrationId) {
-        downloadPdfBtn.style.display = 'inline-flex';
+class BusinessRegistrationForm {
+    constructor() {
+        // Get branch count safely without template variables in JS
+        this.branchIndex = this.getBranchCount();
+        this.currentRegistrationId = this.getCurrentRegistrationId();
+        this.form = document.getElementById('business-registration-form');
+        this.submitBtn = document.getElementById('submit-btn');
+        this.downloadPdfBtn = document.getElementById('download-pdf-btn');
+        this.messageContainer = document.getElementById('message-container');
+        this.messageAlert = document.getElementById('message-alert');
+        
+        this.init();
     }
-
-    function showMessage(message, type) {
-        messageAlert.className = `alert alert-${type} alert-dismissible fade show`;
-        messageAlert.innerHTML = `
-            ${message}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close" style="border:none;background:transparent;float:right;">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        `;
-        messageContainer.style.display = 'block';
+    
+    getBranchCount() {
+        const branchRows = document.querySelectorAll('.branch-row');
+        return branchRows.length;
+    }
+    
+    getCurrentRegistrationId() {
+        const hiddenInput = document.querySelector('input[name="registration_id"]');
+        return hiddenInput ? hiddenInput.value : null;
+    }
+    
+    init() {
+        this.addRequiredAsterisks();
+        this.bindEvents();
+        
+        if (this.currentRegistrationId) {
+            this.downloadPdfBtn.style.display = 'inline-flex';
+        }
+    }
+    
+    addRequiredAsterisks() {
+        const requiredElements = document.querySelectorAll('input[required], select[required], textarea[required]');
+        requiredElements.forEach(el => {
+            const formGroup = el.closest('.form-group');
+            if (formGroup) {
+                const label = formGroup.querySelector('label');
+                if (label && !label.classList.contains('required')) {
+                    label.classList.add('required');
+                }
+            }
+        });
+    }
+    
+    bindEvents() {
+        this.submitBtn.addEventListener('click', this.handleSubmit.bind(this));
+        this.downloadPdfBtn.addEventListener('click', this.handleDownloadPdf.bind(this));
+        
+        // Handle country code changes
+        const countryCodeSelects = document.querySelectorAll('.country-code-select');
+        countryCodeSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                const phoneInput = this.parentElement.querySelector('.phone-number-input');
+                if (phoneInput) {
+                    phoneInput.focus();
+                }
+            });
+        });
+        
+        // Handle form submission preparation
+        this.form.addEventListener('submit', this.prepareFormSubmission.bind(this));
+    }
+    
+    showMessage(message, type) {
+        this.messageAlert.className = 'alert alert-' + type + ' alert-dismissible fade show';
+        this.messageAlert.innerHTML = message + 
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close" style="border:none;background:transparent;float:right;">' +
+            '<span aria-hidden="true">&times;</span>' +
+            '</button>';
+        this.messageContainer.style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
-    function hideMessage() {
-        messageContainer.style.display = 'none';
+    
+    hideMessage() {
+        this.messageContainer.style.display = 'none';
     }
+    
+    async handleSubmit(e) {
+    e.preventDefault();
+    this.hideMessage();
+    
+    if (this.submitBtn.disabled) {
+        return;
+    }
+    
+    try {
+        this.setSubmitButtonState(true, '<i class="fa fa-spinner fa-spin"></i> Submitting...');
+        
+        // Single submission with all data and files
+        const result = await this.submitApplication();
+        
+        if (result.status === 'success') {
+            this.showMessage(result.message, 'success');
+            this.downloadPdfBtn.style.display = 'inline-flex';
+            this.currentRegistrationId = result.registration_id;
+            
+            setTimeout(() => {
+                this.disableForm();
+            }, 2000);
+        } else {
+            throw new Error(result.message);
+        }
+        
+    } catch (error) {
+        this.showMessage('An error occurred: ' + error.message, 'danger');
+    } finally {
+        this.setSubmitButtonState(false, '<i class="fa fa-paper-plane"></i> Submit Application');
+    }
+}
 
-    // Save draft functionality
-    saveBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        hideMessage();
+submitApplication() {
+    const formData = new FormData(this.form);
+    
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/method/business_registration.www.business_form.submit_registration_data');
         
-        const originalText = saveBtn.innerHTML;
-        saveBtn.disabled = true;
-        saveBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
+        xhr.setRequestHeader('X-Frappe-CSRF-Token', frappe.csrf_token);
+        xhr.setRequestHeader('Expect', '');
         
-        const formData = new FormData(form);
-        
-        fetch('/api/method/business_registration.www.business_form.create_or_update_registration', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Frappe-CSRF-Token': frappe.csrf_token
+        xhr.onload = function() {
+            try {
+                const response = JSON.parse(xhr.responseText);
+                resolve(response.message || response);
+            } catch (error) {
+                reject(new Error('Failed to parse response'));
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message && data.message.status === 'success') {
-                showMessage('Registration saved as draft successfully!', 'success');
-                
-                // Update form with registration ID if new
-                if (data.message.registration_id && !document.querySelector('[name="registration_id"]')) {
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'registration_id';
-                    hiddenInput.value = data.message.registration_id;
-                    form.appendChild(hiddenInput);
-                }
-                
-                if (data.message.registration_id) {
-                    currentRegistrationId = data.message.registration_id;
-                    downloadPdfBtn.style.display = 'inline-flex';
-                }
-            } else {
-                const errorMsg = data.message ? data.message.message : 'An error occurred while saving';
-                showMessage(errorMsg, 'danger');
-            }
-        })
-        .catch(error => {
-            showMessage('An error occurred while saving the registration', 'danger');
-        })
-        .finally(() => {
-            saveBtn.disabled = false;
-            saveBtn.innerHTML = originalText;
-        });
+        };
+        
+        xhr.onerror = function() {
+            reject(new Error('Network error occurred'));
+        };
+        
+        xhr.send(formData);
     });
-
-    // Submit application functionality
-    submitBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        hideMessage();
+}
+    
+    uploadRegistrationFiles(registrationId) {
+        const formData = new FormData();
+        formData.append('registration_id', registrationId);
         
-        // First save the form
-        const formData = new FormData(form);
-        
-        const originalText = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting...';
-        
-        // Save first, then submit
-        fetch('/api/method/business_registration.www.business_form.create_or_update_registration', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Frappe-CSRF-Token': frappe.csrf_token
+        // Add only file fields to form data
+        const fileFields = ['business_registration_details', 'proof_of_address', 'additional_documents'];
+        fileFields.forEach(fieldName => {
+            const fileInput = document.getElementById(fieldName);
+            if (fileInput && fileInput.files[0]) {
+                formData.append(fieldName, fileInput.files[0]);
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message && data.message.status === 'success') {
-                // Now submit the application
-                const registrationId = data.message.registration_id;
-                
-                currentRegistrationId = registrationId;
-                downloadPdfBtn.style.display = 'inline-flex';
-                
-                return fetch('/api/method/business_registration.www.business_form.submit_registration', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-Frappe-CSRF-Token': frappe.csrf_token
-                    },
-                    body: `registration_id=${registrationId}`
-                });
-            } else {
-                throw new Error(data.message ? data.message.message : 'Failed to save registration');
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message && data.message.status === 'success') {
-                showMessage(data.message.message, 'success');
-                
-                // Disable form after successful submission
-                setTimeout(() => {
-                    const inputs = form.querySelectorAll('input, select, textarea, button:not(#download-pdf-btn)');
-                    inputs.forEach(input => input.disabled = true);
-                    
-                    showMessage('Application submitted successfully! Form has been disabled. You will receive email notifications about the review status. You can download a PDF copy of your application using the button below.', 'info');
-                }, 2000);
-            } else {
-                const errorMsg = data.message ? data.message.message : 'An error occurred while submitting';
-                showMessage(errorMsg, 'danger');
-            }
-        })
-        .catch(error => {
-            showMessage('An error occurred while submitting the application: ' + error.message, 'danger');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
         });
-    });
-
-    downloadPdfBtn.addEventListener('click', function(e) {
+        
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/api/method/business_registration.www.business_form.upload_registration_files');
+            
+            // Set headers to avoid 417 error
+            xhr.setRequestHeader('X-Frappe-CSRF-Token', frappe.csrf_token);
+            xhr.setRequestHeader('Expect', '');
+            
+            xhr.onload = function() {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    resolve(response.message || response);
+                } catch (error) {
+                    reject(new Error('Failed to parse response'));
+                }
+            };
+            
+            xhr.onerror = function() {
+                reject(new Error('File upload error'));
+            };
+            
+            xhr.send(formData);
+        });
+    }
+    
+    handleDownloadPdf(e) {
         e.preventDefault();
         
-        if (!currentRegistrationId) {
-            showMessage('Please save your registration first before downloading PDF', 'warning');
+        if (!this.currentRegistrationId) {
+            this.showMessage('Please save your registration first before downloading PDF', 'warning');
             return;
         }
         
-        const originalText = downloadPdfBtn.innerHTML;
-        downloadPdfBtn.disabled = true;
-        downloadPdfBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Generating PDF...';
+        this.setDownloadButtonState(true, '<i class="fa fa-spinner fa-spin"></i> Generating PDF...');
         
-        const pdfUrl = `/api/method/business_registration.business_registration.doctype.business_registration.business_registration.generate_registration_pdf?name=${encodeURIComponent(currentRegistrationId)}`;
+        const pdfUrl = '/api/method/business_registration.business_registration.doctype.business_registration.business_registration.generate_registration_pdf?name=' + encodeURIComponent(this.currentRegistrationId);
         
-        // Create a temporary link to trigger download
         const link = document.createElement('a');
         link.href = pdfUrl;
         link.target = '_blank';
-        link.download = `Business_Registration_${currentRegistrationId}.pdf`;
+        link.download = 'Business_Registration_' + this.currentRegistrationId + '.pdf';
         
-        // Add to DOM, click, and remove
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         
-        // Reset button after a short delay
-        setTimeout(() => {
-            downloadPdfBtn.innerHTML = originalText;
-            downloadPdfBtn.disabled = false;
-            showMessage('PDF download started successfully!', 'success');
+        const self = this;
+        setTimeout(function() {
+            self.setDownloadButtonState(false, '<i class="fa fa-file-pdf-o"></i> Download PDF');
+            self.showMessage('PDF download started successfully!', 'success');
         }, 1000);
-    });
-
-    function formatPhoneNumber() {
-        const phoneInputs = document.querySelectorAll('.phone-number-input');
-        phoneInputs.forEach(input => {
-            const countryCodeSelect = input.parentElement.querySelector('.country-code-select');
-            if (countryCodeSelect && countryCodeSelect.value && input.value) {
-                // Combine country code with phone number for submission
-                const fullNumber = countryCodeSelect.value + input.value.replace(/^\+?\d{1,4}/, '');
-                input.setAttribute('data-full-number', fullNumber);
-            }
-        });
     }
-
-    // Format phone numbers before form submission
-    form.addEventListener('submit', function(e) {
-        formatPhoneNumber();
-        
-        // Update the actual input values with full phone numbers
+    
+    prepareFormSubmission(e) {
+        // Format phone numbers before submission
         const phoneInputs = document.querySelectorAll('.phone-number-input');
-        phoneInputs.forEach(input => {
+        phoneInputs.forEach(function(input) {
             const countryCodeSelect = input.parentElement.querySelector('.country-code-select');
             if (countryCodeSelect && countryCodeSelect.value && input.value) {
-                const cleanNumber = input.value.replace(/^\+?\d{1,4}/, '').replace(/\D/g, '');
+                const cleanNumber = input.value.replace(/\D/g, '');
                 input.value = countryCodeSelect.value + cleanNumber;
             }
         });
-    });
-
-    // Handle country code changes
-    document.querySelectorAll('.country-code-select').forEach(select => {
-        select.addEventListener('change', function() {
-            const phoneInput = this.parentElement.querySelector('.phone-number-input');
-            if (phoneInput) {
-                phoneInput.focus();
-            }
+    }
+    
+    setSubmitButtonState(disabled, html) {
+        this.submitBtn.disabled = disabled;
+        this.submitBtn.innerHTML = html;
+    }
+    
+    setDownloadButtonState(disabled, html) {
+        this.downloadPdfBtn.disabled = disabled;
+        this.downloadPdfBtn.innerHTML = html;
+    }
+    
+    disableForm() {
+        const inputs = this.form.querySelectorAll('input, select, textarea, button:not(#download-pdf-btn)');
+        inputs.forEach(function(input) {
+            input.disabled = true;
         });
-    });
+    }
+    
+    addBranch() {
+        const container = document.getElementById('branches-container');
+        const branchHtml = '<div class="branch-row" data-index="' + this.branchIndex + '">' +
+            '<div class="row">' +
+                '<div class="col-md-5">' +
+                    '<div class="form-group">' +
+                        '<label>Branch Name</label>' +
+                        '<input type="text" class="form-control" name="branch_outlets[' + this.branchIndex + '][branch_name]">' +
+                    '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                    '<div class="form-group">' +
+                        '<label>Branch Address</label>' +
+                        '<input type="text" class="form-control" name="branch_outlets[' + this.branchIndex + '][branch_address]">' +
+                    '</div>' +
+                '</div>' +
+                '<div class="col-md-1">' +
+                    '<div class="form-group">' +
+                        '<label>&nbsp;</label>' +
+                        '<button type="button" class="btn btn-sm btn-outline-danger btn-block" onclick="businessForm.removeBranch(this)">' +
+                            '<i class="fa fa-trash"></i>' +
+                        '</button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+        
+        container.insertAdjacentHTML('beforeend', branchHtml);
+        this.branchIndex++;
+    }
+    
+    removeBranch(button) {
+        const branchRow = button.closest('.branch-row');
+        if (branchRow) {
+            branchRow.remove();
+        }
+    }
+}
+
+// Initialize form when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    window.businessForm = new BusinessRegistrationForm();
 });
 
+// Global functions for onclick handlers
 function addBranch() {
-    const container = document.getElementById('branches-container');
-    const branchHtml = `
-        <div class="branch-row" data-index="${branchIndex}">
-            <div class="row">
-                <div class="col-md-5">
-                    <div class="form-group">
-                        <label>Branch Name</label>
-                        <input type="text" class="form-control" name="branch_outlets[${branchIndex}][branch_name]">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Branch Address</label>
-                        <input type="text" class="form-control" name="branch_outlets[${branchIndex}][branch_address]">
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="form-group">
-                        <label>&nbsp;</label>
-                        <button type="button" class="btn btn-sm btn-outline-danger btn-block" onclick="removeBranch(this)">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    container.insertAdjacentHTML('beforeend', branchHtml);
-    branchIndex++;
+    if (window.businessForm) {
+        window.businessForm.addBranch();
+    }
 }
 
 function removeBranch(button) {
-    const branchRow = button.closest('.branch-row');
-    branchRow.remove();
+    if (window.businessForm) {
+        window.businessForm.removeBranch(button);
+    }
 }
-</script>
+ </script>
+</div>
 
 {% endblock %}

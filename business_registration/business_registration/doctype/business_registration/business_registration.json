@@ -298,8 +298,8 @@
       "fieldname": "application_status",
       "fieldtype": "Select",
       "label": "Application Status",
-      "options": "Draft\nSubmitted\nUnder Review\nApproved\nRejected",
-      "default": "Draft",
+      "options": "Under Review\nApproved\nRejected",
+      "default": "Under Review",
       "read_only": 1
     },
     {

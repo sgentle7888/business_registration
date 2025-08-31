@@ -1,7 +1,4 @@
-# Copyright (c) 2025, Business Registration App and contributors
-# For license information, please see license.txt
-
-# Copyright (c) 2025, Business Registration App and contributors
+# Copyright (c) 2025, Godwin Ariwodo App and contributors
 # For license information, please see license.txt
 
 import frappe
@@ -21,20 +18,12 @@ from .email_notifications import (
 
 class BusinessRegistration(Document):
     def validate(self):
-        # Skip mandatory validation for attachments when status is Draft
-        if self.application_status == "Draft":
-            # Temporarily remove mandatory requirement for attachments
-            meta = frappe.get_meta("Business Registration")
-            for fieldname in ["business_registration_details", "proof_of_address"]:
-                field = meta.get_field(fieldname)
-                if field:
-                    field.reqd = 0
-
+        # Remove Draft status exception for attachments
         self.validate_email_format()
         self.validate_phone_numbers()
         self.validate_cac_number()
         self.validate_dates()
-        self.validate_required_attachments()
+        self.validate_required_attachments()  # Now always validates
         self.validate_annual_turnover()
         self.validate_branch_outlets()
         self.validate_business_references()
@@ -100,12 +89,11 @@ class BusinessRegistration(Document):
     
     def validate_required_attachments(self):
         """Validate that required documents are attached"""
-        if self.application_status in ["Submitted", "Under Review"]:
-            if not self.business_registration_details:
-                frappe.throw(_("Business Registration Details document is required"))
-            
-            if not self.proof_of_address:
-                frappe.throw(_("Proof of Address document is required"))
+        if not self.business_registration_details:
+            frappe.throw(_("Business Registration Details document is required"))
+        
+        if not self.proof_of_address:
+            frappe.throw(_("Proof of Address document is required"))
     
     def validate_annual_turnover(self):
         """Validate annual turnover is reasonable"""
@@ -160,10 +148,7 @@ class BusinessRegistration(Document):
         if self.has_value_changed("application_status"):
             current_time = now_datetime()
             
-            if self.application_status == "Submitted" and not self.submission_date:
-                self.submission_date = current_time
-            
-            elif self.application_status == "Under Review" and not self.review_date:
+            if self.application_status == "Under Review" and not self.review_date:
                 self.review_date = current_time
                 self.reviewed_by = frappe.session.user
             
@@ -179,18 +164,16 @@ class BusinessRegistration(Document):
     def validate_status_transitions(self):
         """Validate allowed status transitions"""
         if self.has_value_changed("application_status"):
-            old_status = self.get_db_value("application_status") or "Draft"
+            old_status = self.get_db_value("application_status") or "Under Review"
             new_status = self.application_status
             
             if old_status == new_status:
                 return
             
             allowed_transitions = {
-                "Draft": ["Submitted"],
-                "Submitted": ["Under Review", "Rejected"],
                 "Under Review": ["Approved", "Rejected"],
                 "Approved": [],  # Final state
-                "Rejected": ["Submitted"]  # Allow resubmission after rejection
+                "Rejected": ["Under Review"]  # Allow re-review after rejection
             }
             
             if new_status not in allowed_transitions.get(old_status, []):
@@ -216,7 +199,46 @@ class BusinessRegistration(Document):
         except Exception as e:
             frappe.log_error(frappe.get_traceback(), "Business Registration Notification Error")
             frappe.msgprint(_("Application saved successfully, but there was an issue sending notifications"), alert=True)
+
+    def on_submit_workflow(self, workflow_state):
+        """Called when document is submitted via workflow"""
+        self.application_status = "Submitted"
+        self.submission_date = now_datetime()
     
+    def on_update_workflow(self, workflow_state):
+        """Called when workflow state is updated"""
+        status_mapping = {
+            "Under Review": "Under Review",
+            "Approved": "Approved",
+            "Rejected": "Rejected"
+        }
+        
+        if workflow_state in status_mapping:
+            self.application_status = status_mapping[workflow_state]
+            
+            current_time = now_datetime()
+            if workflow_state == "Approved" and not self.approval_date:
+                self.approval_date = current_time
+                self.reviewed_by = frappe.session.user
+            elif workflow_state == "Rejected":
+                self.reviewed_by = frappe.session.user
+            elif workflow_state == "Under Review" and not self.review_date:
+                self.review_date = current_time
+                self.reviewed_by = frappe.session.user
+    
+    def on_cancel_workflow(self, workflow_state):
+        """Called when workflow is cancelled"""
+        self.application_status = "Draft"
+        # Clear workflow-related timestamps
+        self.submission_date = None
+        self.review_date = None
+        self.approval_date = None
+        self.reviewed_by = None
+
+    def on_update(self):
+        """Called after document is updated"""
+        pass
+
 def has_permission(doc, ptype, user):
     """Custom permission logic"""
     if not doc:
