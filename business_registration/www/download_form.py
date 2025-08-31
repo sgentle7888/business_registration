@@ -1,31 +1,27 @@
 import frappe
 from frappe import _
 from frappe.utils.pdf import get_pdf
-from frappe.utils.jinja import render_template
 
 def get_context(context):
-    """Get context for download form page"""
-    
-    # Get company name
+    """Context for download form page"""
     company_name = "Business Registration Authority"
+
     try:
         companies = frappe.get_all("Company", fields=["company_name"], limit=1)
         if companies:
             company_name = companies[0].company_name
     except Exception:
         pass
-    
-    # Set context variables
+
     context.company_name = company_name
     context.title = _("Download Business Registration Form")
     context.no_cache = 1
-    
     return context
+
 
 @frappe.whitelist(allow_guest=True)
 def generate_empty_form():
     """Generate empty PDF form for manual filling"""
-    
     try:
         # Get company info
         company_name = "Business Registration Authority"
@@ -35,75 +31,74 @@ def generate_empty_form():
                 company_name = companies[0].company_name
         except Exception:
             pass
-        
-        # Prepare context data for empty form
+
+        # Context for rendering
         context = {
             "company_name": company_name,
-            "frappe": frappe,
             "business_types": [
                 "Limited Liability Company",
-                "Public Limited Company", 
+                "Public Limited Company",
                 "Partnership",
                 "Sole Proprietorship",
                 "Non-Profit Organization",
                 "Others"
             ],
             "nigerian_states": [
-                "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", 
-                "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", 
-                "FCT", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", 
-                "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", 
+                "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
+                "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu",
+                "FCT", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi",
+                "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun",
                 "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara"
             ]
         }
-        
-        # Get the empty form template
-        html_content = f"""
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Business Registration Form</title>
-    <style>
-        body {{ font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }}
-        .header {{ text-align: center; margin-bottom: 30px; }}
-        .form-section {{ margin-bottom: 25px; page-break-inside: avoid; }}
-        .form-section h3 {{ background: #f0f0f0; padding: 10px; margin: 0 0 15px 0; }}
-        .form-group {{ margin-bottom: 15px; }}
-        .form-group label {{ font-weight: bold; display: block; margin-bottom: 5px; }}
-        .form-control {{ border: 1px solid #ccc; padding: 8px; width: 100%; min-height: 25px; }}
-        .checkbox-group {{ display: flex; flex-wrap: wrap; gap: 15px; }}
-        .checkbox-item {{ display: flex; align-items: center; gap: 5px; }}
-        table {{ width: 100%; border-collapse: collapse; }}
-        th, td {{ border: 1px solid #ccc; padding: 8px; text-align: left; }}
-        .signature-box {{ border: 1px solid #ccc; height: 50px; width: 200px; }}
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>{context['company_name']}</h1>
-        <h2>Business Registration Application Form</h2>
-        <p><strong>Please fill all sections completely and legibly</strong></p>
-    </div>
 
-    <div class="form-section">
-        <h3>1. BUSINESS INFORMATION</h3>
-        <div class="form-group">
-            <label>Business Name: *</label>
-            <div class="form-control"></div>
-        </div>
-        <div class="form-group">
-            <label>CAC Number: *</label>
-            <div class="form-control"></div>
-        </div>
-        <div class="form-group">
+        # Build HTML (better: keep this in a Jinja template file)
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Business Registration Form</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }}
+                .header {{ text-align: center; margin-bottom: 30px; }}
+                .form-section {{ margin-bottom: 25px; page-break-inside: avoid; }}
+                .form-section h3 {{ background: #f0f0f0; padding: 10px; margin: 0 0 15px 0; }}
+                .form-group {{ margin-bottom: 15px; }}
+                .form-group label {{ font-weight: bold; display: block; margin-bottom: 5px; }}
+                .form-control {{ border: 1px solid #ccc; padding: 8px; width: 100%; min-height: 25px; }}
+                .checkbox-group {{ display: flex; flex-wrap: wrap; gap: 15px; }}
+                .checkbox-item {{ display: flex; align-items: center; gap: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; }}
+                th, td {{ border: 1px solid #ccc; padding: 8px; text-align: left; }}
+                .signature-box {{ border: 1px solid #ccc; height: 50px; width: 200px; }}
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>{context['company_name']}</h1>
+                <h2>Business Registration Application Form</h2>
+                <p><strong>Please fill all sections completely and legibly</strong></p>
+            </div>
+
+            <div class="form-section">
+                <h3>1. BUSINESS INFORMATION</h3>
+                <div class="form-group">
+                    <label>Business Name: *</label>
+                    <div class="form-control"></div>
+                </div>
+                <div class="form-group">
+                    <label>CAC Number: *</label>
+                    <div class="form-control"></div>
+                </div>
+                <div class="form-group">
             <label>Business Type:</label>
             <div class="checkbox-group">
                 {' '.join([f'<div class="checkbox-item"><input type="checkbox"> {btype}</div>' for btype in context['business_types']])}
             </div>
         </div>
         <div class="form-group">
-            <label>Annual Turnover (₦): *</label>
+            <label>Annual Turnover (â‚¦): *</label>
             <div class="form-control"></div>
         </div>
         <div class="form-group">
@@ -254,29 +249,20 @@ def generate_empty_form():
         <div class="checkbox-item"><input type="checkbox"> CAC Certificate or Business Registration Documents</div>
         <div class="checkbox-item"><input type="checkbox"> Proof of Business Address (Utility bill, lease agreement, etc.)</div>
         <div class="checkbox-item"><input type="checkbox"> Additional Supporting Documents (if any)</div>
-    </div>
-</body>
-</html>
-"""
-        
-                
-        # Generate PDF
-        pdf_content = get_pdf(html_content, {
-            "page-size": "A4",
-            "margin-top": "0.5in",
-            "margin-right": "0.5in",
-            "margin-bottom": "0.5in",
-            "margin-left": "0.5in",
-            "encoding": "UTF-8",
-            "no-outline": None
-        })
-        
-        # Set response headers for PDF download
+            </div>
+        </body>
+        </html>
+        """
+
+        # Frappe-native PDF generation (no need for pdfkit / subprocess)
+        pdf_content = get_pdf(html_content)
+
+        # Set response for file download
         filename = f"Business_Registration_Form_Empty_{frappe.utils.today()}.pdf"
         frappe.local.response.filename = filename
         frappe.local.response.filecontent = pdf_content
         frappe.local.response.type = "download"
-        
+
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Empty PDF Generation Error")
         frappe.throw(_("Error generating empty form PDF: {0}").format(str(e)))
