@@ -1,0 +1,483 @@
+{% extends "templates/web.html" %} {% block title %}Download Business
+Registration Form{% endblock %} {% block page_content %}
+<div class="download-page-container">
+  <!-- Company Header -->
+  <div class="company-header">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 text-center">
+          <div class="company-logo mb-3">
+            <img src="/files/logo.png" alt="Company Logo" class="logo-img" />
+          </div>
+          <div class="company-info">
+            <h2 class="company-name">{{ company_name }}</h2>
+            <p class="company-tagline">
+              Streamlining Business Registration Process
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="download-wrapper">
+      <div class="download-card">
+        <div class="download-icon">
+          <i class="fa fa-file-pdf-o"></i>
+        </div>
+        <h1 class="download-title">Download Business Registration Form</h1>
+        <p class="download-description">
+          Download the empty PDF form to fill it manually. Once completed, you
+          can upload and submit it using our manual submission page.
+        </p>
+
+        <!-- Form Options -->
+        <div class="form-options">
+          <div class="option-card">
+            <h3><i class="fa fa-laptop"></i> Online Form (Recommended)</h3>
+            <p>
+              Fill out the form directly on our website with validation and
+              auto-save features.
+            </p>
+            <a href="/business-registration" class="btn btn-primary btn-lg">
+              <i class="fa fa-edit"></i> Fill Online Form
+            </a>
+          </div>
+
+          <div class="option-card">
+            <h3><i class="fa fa-file-pdf-o"></i> Manual PDF Form</h3>
+            <p>
+              Download and fill the PDF form manually, then upload it for
+              submission.
+            </p>
+            <a
+              href="/api/method/business_registration.www.download_form.generate_empty_form"
+              class="btn btn-outline-info btn-lg"
+              target="_blank"
+            >
+              <i class="fa fa-download"></i> Download Empty PDF
+            </a>
+            <div class="manual-submission-link">
+              <small
+                >After filling:
+                <a href="/business-registration/manual-submission"
+                  >Upload Completed Form</a
+                ></small
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+          <h3>Instructions for Manual Form</h3>
+          <div class="instruction-steps">
+            <div class="instruction-step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h4>Download the Form</h4>
+                <p>
+                  Click the "Download Empty PDF" button above to get the blank
+                  form
+                </p>
+              </div>
+            </div>
+            <div class="instruction-step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h4>Fill Complete Information</h4>
+                <p>
+                  Fill all required fields clearly and legibly. Ensure all
+                  information is accurate
+                </p>
+              </div>
+            </div>
+            <div class="instruction-step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h4>Attach Required Documents</h4>
+                <p>
+                  Prepare digital copies of CAC certificate and proof of address
+                </p>
+              </div>
+            </div>
+            <div class="instruction-step">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h4>Submit Online</h4>
+                <p>
+                  Upload the completed form and documents using our manual
+                  submission page
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Required Documents -->
+        <div class="required-documents">
+          <h3>Required Documents</h3>
+          <ul>
+            <li>
+              <strong>Business Registration Details:</strong> CAC certificate or
+              business registration documents
+            </li>
+            <li>
+              <strong>Proof of Address:</strong> Utility bill, lease agreement,
+              or other proof of business address
+            </li>
+            <li>
+              <strong>Additional Documents:</strong> Any other supporting
+              documents (optional)
+            </li>
+          </ul>
+          <p>
+            <small
+              ><strong>Note:</strong> All documents should be in PDF, JPG, or
+              PNG format and not exceed 5MB each.</small
+            >
+          </p>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="contact-info">
+          <h3>Need Help?</h3>
+          <p>
+            If you have any questions about filling the form, please contact us:
+          </p>
+          <div class="contact-details">
+            <div class="contact-item">
+              <i class="fa fa-envelope"></i>
+              <span>support@businessregistration.gov.ng</span>
+            </div>
+            <div class="contact-item">
+              <i class="fa fa-phone"></i>
+              <span>+234 1 234 5678</span>
+            </div>
+            <div class="contact-item">
+              <i class="fa fa-clock-o"></i>
+              <span>Monday - Friday: 8:00 AM - 5:00 PM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  :root {
+    --primary-color: #2c5aa0;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --text-color: #495057;
+  }
+
+  .download-page-container {
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding-bottom: 2rem;
+  }
+
+  .company-header {
+    background: white;
+    border-bottom: 3px solid var(--primary-color);
+    padding: 2rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .logo-img {
+    max-height: 100px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .company-name {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .company-tagline {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 0;
+    font-style: italic;
+  }
+
+  .download-wrapper {
+    max-width: 900px;
+    margin: 3rem auto;
+  }
+
+  .download-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
+  }
+
+  .download-icon {
+    text-align: center;
+    font-size: 5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+  }
+
+  .download-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .download-description {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .form-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .option-card {
+    background: var(--light-color);
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  .option-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+  }
+
+  .option-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+  }
+
+  .option-card h3 i {
+    margin-right: 0.5rem;
+  }
+
+  .option-card p {
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .manual-submission-link {
+    margin-top: 1rem;
+  }
+
+  .manual-submission-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+
+  .manual-submission-link a:hover {
+    text-decoration: underline;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+
+  .btn i {
+    margin-right: 0.5rem;
+  }
+
+  .btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+  }
+
+  .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #1a365d;
+    border-color: #1a365d;
+    transform: translateY(-1px);
+  }
+
+  .btn-outline-info {
+    color: var(--info-color);
+    border-color: var(--info-color);
+    background-color: transparent;
+  }
+
+  .btn-outline-info:hover {
+    background-color: var(--info-color);
+    color: white;
+  }
+
+  .instructions {
+    margin: 3rem 0;
+  }
+
+  .instructions h3 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+  }
+
+  .instruction-steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .instruction-step {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem;
+    background: var(--light-color);
+    border-radius: 8px;
+  }
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 1rem;
+    flex-shrink: 0;
+  }
+
+  .step-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--dark-color);
+    font-size: 1.1rem;
+  }
+
+  .step-content p {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .required-documents {
+    background: #fff3cd;
+    border-left: 4px solid var(--warning-color);
+    border-radius: 5px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .required-documents h3 {
+    color: #856404;
+    margin-bottom: 1rem;
+  }
+
+  .required-documents ul {
+    margin: 0 0 1rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .required-documents li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+  }
+
+  .contact-info {
+    background: var(--light-color);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  .contact-info h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+  }
+
+  .contact-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 1rem;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    margin: 0.5rem;
+  }
+
+  .contact-item i {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+    width: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .download-card {
+      padding: 2rem 1rem;
+      margin: 1rem;
+    }
+
+    .download-title {
+      font-size: 2rem;
+    }
+
+    .form-options {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .instruction-steps {
+      grid-template-columns: 1fr;
+    }
+
+    .btn {
+      width: 100%;
+    }
+
+    .contact-details {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .company-name {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+{% endblock %}

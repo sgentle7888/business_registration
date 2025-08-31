@@ -1,0 +1,501 @@
+{% extends "templates/web.html" %} {% block title %}Application Submitted
+Successfully{% endblock %} {% block page_content %}
+<div class="success-page-container">
+  <!-- Company Header -->
+  <div class="company-header">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 text-center">
+          <div class="company-logo mb-3">
+            <img src="/files/logo.png" alt="Company Logo" class="logo-img" />
+          </div>
+          <div class="company-info">
+            <h2 class="company-name">
+              {{ company_name or "Business Registration Authority" }}
+            </h2>
+            <p class="company-tagline">
+              Streamlining Business Registration Process
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="success-wrapper">
+      <!-- Success Message -->
+      <div class="success-card">
+        <div class="success-icon">
+          <i class="fa fa-check-circle"></i>
+        </div>
+        <h1 class="success-title">Application Submitted Successfully!</h1>
+        <p class="success-message">
+          Thank you for submitting your business registration application. Your
+          application has been received and is now under review.
+        </p>
+
+        {% if registration_id %}
+        <div class="application-details">
+          <h3>Application Details</h3>
+          <div class="detail-row">
+            <strong>Registration ID:</strong> {{ registration_id }}
+          </div>
+          {% if business_name %}
+          <div class="detail-row">
+            <strong>Business Name:</strong> {{ business_name }}
+          </div>
+          {% endif %}
+          <div class="detail-row">
+            <strong>Submission Date:</strong> {{
+            frappe.utils.formatdate(frappe.utils.now()) }}
+          </div>
+          <div class="detail-row">
+            <strong>Status:</strong>
+            <span class="status-badge under-review">Under Review</span>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- What happens next -->
+        <div class="next-steps">
+          <h3>What happens next?</h3>
+          <div class="steps-timeline">
+            <div class="step completed">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h4>Application Submitted</h4>
+                <p>Your application has been successfully submitted</p>
+              </div>
+            </div>
+            <div class="step current">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h4>Under Review</h4>
+                <p>Our team will review your application and documents</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h4>Decision</h4>
+                <p>You'll receive an email notification with the decision</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Important Information -->
+        <div class="important-info">
+          <h3>Important Information</h3>
+          <ul>
+            <li>
+              You will receive email notifications at each stage of the review
+              process
+            </li>
+            <li>The review process typically takes 3-5 business days</li>
+            <li>
+              Please save your Registration ID:
+              <strong>{{ registration_id }}</strong>
+            </li>
+            <li>
+              You can check your application status using the tracking link
+              below
+            </li>
+            <li>If you have any questions, please contact our support team</li>
+          </ul>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          {% if registration_id %}
+          <a
+            href="/business-registration/status?registration_id={{ registration_id }}"
+            class="btn btn-primary btn-lg"
+          >
+            <i class="fa fa-search"></i> Track Application Status
+          </a>
+          <a
+            href="/api/method/business_registration.business_registration.doctype.business_registration.business_registration.generate_registration_pdf?name={{ registration_id }}"
+            class="btn btn-outline-info btn-lg"
+            target="_blank"
+          >
+            <i class="fa fa-file-pdf-o"></i> Download PDF Copy
+          </a>
+          {% endif %}
+          <a
+            href="/business-registration"
+            class="btn btn-outline-secondary btn-lg"
+          >
+            <i class="fa fa-plus"></i> Submit New Application
+          </a>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="contact-info">
+          <h3>Need Help?</h3>
+          <p>
+            If you have any questions about your application, please contact us:
+          </p>
+          <div class="contact-details">
+            <div class="contact-item">
+              <i class="fa fa-envelope"></i>
+              <span>support@businessregistration.gov.ng</span>
+            </div>
+            <div class="contact-item">
+              <i class="fa fa-phone"></i>
+              <span>+234 1 234 5678</span>
+            </div>
+            <div class="contact-item">
+              <i class="fa fa-clock-o"></i>
+              <span>Monday - Friday: 8:00 AM - 5:00 PM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  :root {
+    --primary-color: #2c5aa0;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --text-color: #495057;
+  }
+
+  .success-page-container {
+    background: #f0f2f5;
+    min-height: 100vh;
+    padding-bottom: 2rem;
+  }
+
+  .company-header {
+    background: white;
+    border-bottom: 3px solid var(--primary-color);
+    padding: 2rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .logo-img {
+    max-height: 100px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .company-name {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .company-tagline {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 0;
+    font-style: italic;
+  }
+
+  .success-wrapper {
+    max-width: 800px;
+    margin: 3rem auto;
+  }
+
+  .success-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
+    text-align: center;
+  }
+
+  .success-icon {
+    font-size: 5rem;
+    color: var(--success-color);
+    margin-bottom: 1.5rem;
+  }
+
+  .success-title {
+    font-size: 2.5rem;
+    color: var(--success-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .success-message {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .application-details {
+    background: var(--light-color);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+
+  .application-details h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+
+  .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .status-badge.under-review {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  .next-steps {
+    margin: 2rem 0;
+    text-align: left;
+  }
+
+  .next-steps h3 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .steps-timeline {
+    position: relative;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: 45px;
+    width: 2px;
+    height: 30px;
+    background-color: #dee2e6;
+  }
+
+  .step.completed::after {
+    background-color: var(--success-color);
+  }
+
+  .step.current::after {
+    background-color: var(--warning-color);
+  }
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #dee2e6;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step.completed .step-number {
+    background-color: var(--success-color);
+  }
+
+  .step.current .step-number {
+    background-color: var(--warning-color);
+  }
+
+  .step-content h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: var(--dark-color);
+  }
+
+  .step-content p {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 0.95rem;
+  }
+
+  .important-info {
+    background: #e7f3ff;
+    border-left: 4px solid var(--info-color);
+    border-radius: 5px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: left;
+  }
+
+  .important-info h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+  }
+
+  .important-info ul {
+    margin: 0;
+    padding-left: 1.5rem;
+  }
+
+  .important-info li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+  }
+
+  .action-buttons {
+    margin: 2rem 0;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    border: 2px solid transparent;
+    cursor: pointer;
+    margin: 0.5rem;
+  }
+
+  .btn i {
+    margin-right: 0.5rem;
+  }
+
+  .btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+  }
+
+  .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #1a365d;
+    border-color: #1a365d;
+    transform: translateY(-1px);
+  }
+
+  .btn-outline-info {
+    color: var(--info-color);
+    border-color: var(--info-color);
+    background-color: transparent;
+  }
+
+  .btn-outline-info:hover {
+    background-color: var(--info-color);
+    color: white;
+  }
+
+  .btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+    background-color: transparent;
+  }
+
+  .btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .contact-info {
+    background: var(--light-color);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .contact-info h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+  }
+
+  .contact-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 1rem;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    margin: 0.5rem;
+  }
+
+  .contact-item i {
+    color: var(--primary-color);
+    margin-right: 0.5rem;
+    width: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .success-card {
+      padding: 2rem 1rem;
+      margin: 1rem;
+    }
+
+    .success-title {
+      font-size: 2rem;
+    }
+
+    .success-icon {
+      font-size: 4rem;
+    }
+
+    .detail-row {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .btn {
+      width: 100%;
+      margin: 0.5rem 0;
+    }
+
+    .contact-details {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .company-name {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+{% endblock %}
