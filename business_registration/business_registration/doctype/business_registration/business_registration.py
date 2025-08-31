@@ -18,12 +18,14 @@ from .email_notifications import (
 
 class BusinessRegistration(Document):
     def validate(self):
-        # Remove Draft status exception for attachments
+        # Skip attachment validation during initial insert if flag is set
+        if not getattr(self.flags, 'ignore_attachment_validation', False):
+            self.validate_required_attachments()
+        
         self.validate_email_format()
         self.validate_phone_numbers()
         self.validate_cac_number()
         self.validate_dates()
-        self.validate_required_attachments()  # Now always validates
         self.validate_annual_turnover()
         self.validate_branch_outlets()
         self.validate_business_references()

@@ -268,14 +268,12 @@
       "fieldname": "business_registration_details",
       "fieldtype": "Attach",
       "label": "Business Registration Details",
-      "reqd": 1,
       "description": "Upload CAC certificate or business registration documents"
     },
     {
       "fieldname": "proof_of_address",
       "fieldtype": "Attach",
       "label": "Proof of Address",
-      "reqd": 1,
       "description": "Upload utility bill, lease agreement, or other proof of business address"
     },
     {

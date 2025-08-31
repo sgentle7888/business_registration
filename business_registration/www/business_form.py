@@ -91,14 +91,18 @@ def submit_registration_data():
         business_registration.submission_date = now_datetime()
         business_registration.review_date = now_datetime()
         
-        # Insert document first (creates the name/ID)
+        # Set flag to skip attachment validation during initial insert
+        business_registration.flags.ignore_attachment_validation = True
         business_registration.flags.ignore_permissions = True
-        business_registration.insert()  # Use insert() instead of save() for new docs
+        
+        # Insert document first (creates the name/ID)
+        business_registration.insert()
         
         # NOW handle file attachments after document exists
         _handle_file_attachments(business_registration, form_data)
         
-        # Validate for submission after files are attached
+        # Remove the flag and validate everything including attachments
+        business_registration.flags.ignore_attachment_validation = False
         validation_errors = _validate_registration_for_submission(business_registration)
         if validation_errors:
             # If validation fails, delete the created document
@@ -110,7 +114,8 @@ def submit_registration_data():
                 "errors": validation_errors
             }
         
-        # Submit the document (equivalent to changing docstatus to 1)
+        # Save again to update with file attachments and submit
+        business_registration.save()
         business_registration.submit()
         frappe.db.commit()
         
@@ -124,7 +129,7 @@ def submit_registration_data():
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Business Registration Submission Error")
         return {"status": "error", "message": str(e)}
-
+    
 def _process_phone_numbers(business_registration, form_data):
     """Process phone numbers with country codes"""
     
