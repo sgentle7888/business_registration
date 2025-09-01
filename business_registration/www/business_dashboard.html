@@ -575,7 +575,21 @@ function updateApplicationStatus(registrationId, newStatus, rejectionReason = nu
             internal_notes: internalNotes
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => {
+                // Attempt to parse Frappe's HTML error page for a message
+                if (typeof err === 'string') {
+                    const match = err.match(/<div class="msg-box">([^<]+)<\/div>/);
+                    if (match) throw new Error(match[1]);
+                }
+                // Fallback to _server_messages or a generic error
+                const errorData = err._server_messages ? JSON.parse(err._server_messages) : null;
+                throw new Error(errorData ? JSON.parse(errorData[0]).message : 'Update failed');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.message && data.message.status === 'success') {
             return data.message;
@@ -645,9 +659,6 @@ function buildRegistrationDetailsHTML(registration) {
                 </div>
             </div>
             <div class="modal-actions text-right mt-4 pt-3 border-top">
-                <button type="button" class="btn btn-outline-primary" onclick="downloadPDF('${registration.name}')">
-                    <i class="fa fa-file-pdf-o"></i> Download PDF
-                </button>
                 <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
                 ${registration.application_status === 'Submitted' || registration.application_status === 'Under Review' ? `
                     <button type="button" class="btn btn-success" onclick="approveRegistration('${registration.name}')">
@@ -675,11 +686,12 @@ function buildDetailsTab(registration, fields) {
         if (field.type === 'textarea' && value !== '<span class="text-muted">Not Set</span>') {
             value = `<pre style="white-space: pre-wrap; word-break: break-all; background: #f8f9fa; padding: 5px; border-radius: 4px;">${value}</pre>`;
         }
-        content += `<tr><td><strong>${field.label}</strong></td><td>${value}</td></tr>`;
+        content += `<tr><td style="width: 30%;"><strong>${field.label}</strong></td><td>${value}</td></tr>`;
     });
     content += '</table>';
     return content;
 }
+
 
 function buildBranchesTab(branches) {
     if (!branches || branches.length === 0) {
@@ -697,7 +709,7 @@ function buildBranchesTab(branches) {
 function buildDocumentsTab(registration) {
     return `
         <table class="table table-sm table-borderless">
-            <tr><td><strong>Business Registration Details</strong></td><td>${registration.business_registration_details ? `<a href="${registration.business_registration_details}" target="_blank"><i class="fa fa-file"></i> View Document</a>` : '<span class="text-muted">Not uploaded</span>'}</td></tr>
+            <tr><td style="width: 30%;"><strong>Business Registration Details</strong></td><td>${registration.business_registration_details ? `<a href="${registration.business_registration_details}" target="_blank"><i class="fa fa-file"></i> View Document</a>` : '<span class="text-muted">Not uploaded</span>'}</td></tr>
             <tr><td><strong>Proof of Address</strong></td><td>${registration.proof_of_address ? `<a href="${registration.proof_of_address}" target="_blank"><i class="fa fa-file"></i> View Document</a>` : '<span class="text-muted">Not uploaded</span>'}</td></tr>
             <tr><td><strong>Additional Documents</strong></td><td>${registration.additional_documents ? `<a href="${registration.additional_documents}" target="_blank"><i class="fa fa-file"></i> View Document</a>` : '<span class="text-muted">Not uploaded</span>'}</td></tr>
         </table>
@@ -776,48 +788,18 @@ function showNotification(message, type = 'info') {
 
 function formatDate(dateString) {
    if (!dateString) return '';
-   try { return new Date(dateString).toLocaleDateString('en-GB'); }
+   try { return new Date(dateString).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric'}); }
    catch (e) { return dateString; }
-}
-
-function downloadPDF(registrationId) {
-    if (!registrationId) {
-        showNotification('Registration ID is missing', 'error');
-        return;
-    }
-    
-    const btn = event.target.closest('button');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Generating...';
-    btn.disabled = true;
-
-    const pdfUrl = `/api/method/business_registration.business_registration.doctype.business_registration.business_registration.generate_registration_pdf?name=${encodeURIComponent(registrationId)}`;
-    
-    // Create a temporary link to trigger download
-    const link = document.createElement('a');
-    link.href = pdfUrl;
-    link.target = '_blank';
-    link.download = `Business_Registration_${registrationId}.pdf`;
-    
-    // Add to DOM, click, and remove
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    // Reset button after a short delay
-    setTimeout(() => {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        showNotification('PDF download started', 'success');
-    }, 1000);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
    const filterForm = document.getElementById('filter-form');
    if (!filterForm) return;
 
-   filterForm.addEventListener('change', () => {
-       setTimeout(() => filterForm.submit(), 300);
+   // Auto-submit on change for select dropdowns
+   ['status', 'business_type', 'state', 'reviewed_by'].forEach(id => {
+       const el = document.getElementById(id);
+       if(el) el.addEventListener('change', () => filterForm.submit());
    });
 
    const searchInput = document.getElementById('search');

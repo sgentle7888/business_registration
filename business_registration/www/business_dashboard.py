@@ -1,5 +1,6 @@
 import frappe
 from frappe import _
+from frappe.utils import now_datetime
 
 def get_context(context):
     """Get context for Business Registration dashboard"""
@@ -326,7 +327,7 @@ def get_registration_details(registration_id):
 
 @frappe.whitelist()
 def update_application_status(registration_id, new_status, rejection_reason=None, internal_notes=None):
-    """Update application status with proper validation"""
+    """Update application status with proper validation and workflow handling."""
     try:
         if not has_reviewer_access():
             frappe.throw(_("Access denied"), frappe.PermissionError)
@@ -335,19 +336,27 @@ def update_application_status(registration_id, new_status, rejection_reason=None
         
         # Validate status transition
         if new_status == "Rejected" and not rejection_reason:
-            frappe.throw(_("Rejection reason is required"))
+            frappe.throw(_("Rejection reason is required when rejecting an application."))
 
-        # Update status
+        # Update fields before saving
         doc.application_status = new_status
-        if rejection_reason:
+        if new_status == "Approved":
+            doc.approval_date = now_datetime()
+        elif new_status == "Rejected":
             doc.rejection_reason = rejection_reason
+
         if internal_notes:
             doc.internal_notes = internal_notes
+            
+        doc.reviewed_by = frappe.session.user
 
-        doc.save()
+        # Save the document to trigger validations and workflow hooks
+        doc.save(ignore_permissions=True)
+        frappe.db.commit()
         
-        return {"status": "success", "message": f"Application {new_status.lower()} successfully"}
+        return {"status": "success", "message": f"Application status successfully updated to {new_status}."}
 
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Update Application Status Error")
-        frappe.throw(_("Failed to update application status: {0}").format(str(e)))
+        frappe.response.http_status_code = 400
+        return {"error": str(e)}
