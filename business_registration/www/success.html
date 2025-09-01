@@ -94,39 +94,18 @@ Successfully{% endblock %} {% block page_content %}
               process
             </li>
             <li>The review process typically takes 3-5 business days</li>
+            {% if registration_id %}
             <li>
               Please save your Registration ID:
               <strong>{{ registration_id }}</strong>
             </li>
-            <li>
-              You can check your application status using the tracking link
-              below
-            </li>
-            <li>If you have any questions, please contact our support team</li>
+            {% endif %}
           </ul>
         </div>
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-          {% if registration_id %}
-          <a
-            href="/business-registration/status?registration_id={{ registration_id }}"
-            class="btn btn-primary btn-lg"
-          >
-            <i class="fa fa-search"></i> Track Application Status
-          </a>
-          <a
-            href="/api/method/business_registration.business_registration.doctype.business_registration.business_registration.generate_registration_pdf?name={{ registration_id }}"
-            class="btn btn-outline-info btn-lg"
-            target="_blank"
-          >
-            <i class="fa fa-file-pdf-o"></i> Download PDF Copy
-          </a>
-          {% endif %}
-          <a
-            href="/business-registration"
-            class="btn btn-outline-secondary btn-lg"
-          >
+          <a href="/business_form" class="btn btn-outline-secondary btn-lg">
             <i class="fa fa-plus"></i> Submit New Application
           </a>
         </div>
@@ -397,29 +376,6 @@ Successfully{% endblock %} {% block page_content %}
   .btn-lg {
     padding: 1rem 2rem;
     font-size: 1.1rem;
-  }
-
-  .btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-    color: white;
-  }
-
-  .btn-primary:hover {
-    background-color: #1a365d;
-    border-color: #1a365d;
-    transform: translateY(-1px);
-  }
-
-  .btn-outline-info {
-    color: var(--info-color);
-    border-color: var(--info-color);
-    background-color: transparent;
-  }
-
-  .btn-outline-info:hover {
-    background-color: var(--info-color);
-    color: white;
   }
 
   .btn-outline-secondary {

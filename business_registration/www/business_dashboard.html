@@ -189,7 +189,7 @@
                                         <th>Location</th>
                                         <th>Status</th>
                                         <th>Submission Date</th>
-                                        <th>Priority</th>
+                                        <th>View Details</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -236,17 +236,11 @@
                                             {% else %}-{% endif %}
                                         </td>
                                         <td>
-                                            <span class="priority-badge priority-{{ registration.priority.lower() }}">
-                                                {{ registration.priority }}
-                                            </span>
+                                            <button class="btn btn-sm btn-outline-info" onclick="viewRegistration('{{ registration.name }}')" title="View Details">
+                                                <i class="fa fa-eye"></i> Details
+                                            </button>
                                         </td>
                                         <td class="actions-cell">
-                                            <button class="btn btn-sm btn-outline-info" onclick="viewRegistration('{{ registration.name }}')" title="View Details">
-                                                <i class="fa fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-primary" onclick="downloadPDF('{{ registration.name }}')" title="Download PDF">
-                                                <i class="fa fa-file-pdf-o"></i>
-                                            </button>
                                             {% if registration.application_status in ['Submitted', 'Under Review'] %}
                                             <button class="btn btn-sm btn-outline-success" onclick="approveRegistration('{{ registration.name }}')" title="Approve">
                                                 <i class="fa fa-check"></i>
@@ -289,12 +283,12 @@
                                     <button class="btn btn-sm btn-info" onclick="viewRegistration('{{ registration.name }}')">
                                         <i class="fa fa-eye"></i> View
                                     </button>
-                                    <button class="btn btn-sm btn-primary" onclick="downloadPDF('{{ registration.name }}')">
-                                        <i class="fa fa-file-pdf-o"></i> PDF
-                                    </button>
                                     {% if registration.application_status in ['Submitted', 'Under Review'] %}
                                     <button class="btn btn-sm btn-success" onclick="approveRegistration('{{ registration.name }}')">
                                         <i class="fa fa-check"></i> Approve
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="rejectRegistration('{{ registration.name }}')">
+                                        <i class="fa fa-times"></i> Reject
                                     </button>
                                     {% endif %}
                                 </div>
@@ -325,7 +319,6 @@
 .dashboard-subtitle { opacity: 0.9; margin-bottom: 0; }
 .header-actions .btn { margin-left: 0.5rem; }
 
-/* Updated stats cards for business registration context */
 .stats-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); display: flex; align-items: center; margin-bottom: 1rem; transition: transform 0.2s ease; }
 .stats-card:hover { transform: translateY(-2px); }
 .stats-icon { font-size: 2.5rem; margin-right: 1rem; opacity: 0.8; }
@@ -341,7 +334,6 @@
 .card-header { background: var(--light-color); border-bottom: 1px solid #dee2e6; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
 .card-header h5 { margin: 0; font-weight: 600; }
 
-/* Business-specific styling for registration cards */
 .business-info { display: flex; align-items: center; }
 .business-icon { width: 40px; height: 40px; border-radius: 8px; background: var(--primary-color); color: white; display: flex; align-items: center; justify-content: center; margin-right: 0.75rem; }
 .business-details strong { color: var(--dark-color); }
@@ -358,8 +350,8 @@
 .registration-card-body { padding: 1rem; text-align: center; flex-grow: 1; }
 .registration-card-body h6 { font-weight: 600; }
 .registration-card-body p { margin-bottom: 0.25rem; font-size: 0.9rem; }
-.registration-card-actions { border-top: 1px solid #e9ecef; padding: 0.75rem; display: flex; justify-content: space-around; }
-.registration-card-actions .btn { flex-grow: 1; margin: 0 0.25rem; }
+.registration-card-actions { border-top: 1px solid #e9ecef; padding: 0.75rem; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 0.25rem; }
+.registration-card-actions .btn { flex-grow: 1; margin: 0.25rem; min-width: 80px; }
 
 .view-controls .view-btn.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 .actions-cell { white-space: nowrap; }
@@ -370,10 +362,54 @@
 .badge-warning { background-color: #fff3cd; color: #664d03; }
 .badge-danger { background-color: #f8d7da; color: #721c24; }
 .badge-secondary { background-color: #e2e3e5; color: #41464b; }
+
+/* Mobile Responsiveness */
+@media (max-width: 992px) {
+    .dashboard-title { font-size: 2rem; }
+    .stats-card { flex-direction: column; text-align: center; }
+    .stats-icon { margin-right: 0; margin-bottom: 0.5rem; }
+    .filters-section .row { flex-direction: column; }
+    .filters-section .col-md-2 { margin-bottom: 1rem; }
+}
+
+@media (max-width: 768px) {
+    .dashboard-header { padding: 1rem 0; }
+    .dashboard-title { font-size: 1.8rem; }
+    .dashboard-subtitle { font-size: 0.9rem; }
+    .header-actions { margin-top: 1rem; text-align: center; }
+    .header-actions .btn { margin: 0.25rem; }
+    
+    .stats-section .col-xl-3 { margin-bottom: 1rem; }
+    .stats-card { padding: 1rem; }
+    .stats-content h3 { font-size: 1.5rem; }
+    
+    .card-body { padding: 0.75rem; }
+    .table-responsive { font-size: 0.85rem; }
+    .business-info { flex-direction: column; text-align: center; }
+    .business-icon { margin-right: 0; margin-bottom: 0.5rem; }
+    
+    .registration-grid { grid-template-columns: 1fr; padding: 1rem; }
+    .registration-card-actions { flex-direction: column; }
+    .registration-card-actions .btn { margin: 0.25rem 0; }
+}
+
+@media (max-width: 576px) {
+    .container-fluid { padding: 0 0.5rem; }
+    .dashboard-title { font-size: 1.5rem; }
+    .card { margin-bottom: 1rem; }
+    .card-header { padding: 0.75rem 1rem; flex-direction: column; }
+    .card-header h5 { margin-bottom: 0.5rem; }
+    
+    .table th, .table td { padding: 0.5rem 0.25rem; font-size: 0.8rem; }
+    .business-details { text-align: left; }
+    .actions-cell .btn { margin: 0.1rem; padding: 0.25rem 0.5rem; }
+    
+    .btn { font-size: 0.8rem; padding: 0.5rem 0.75rem; }
+    .btn-sm { font-size: 0.75rem; padding: 0.25rem 0.5rem; }
+}
 </style>
 
 <script>
-
 // View Toggle
 document.querySelectorAll('.view-btn').forEach(btn => {
     btn.addEventListener('click', function() {

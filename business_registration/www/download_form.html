@@ -213,6 +213,7 @@ Registration Form{% endblock %} {% block page_content %}
     .download-wrapper {
       max-width: 900px;
       margin: 3rem auto;
+      padding: 0 1rem;
     }
 
     .download-card {
@@ -269,6 +270,7 @@ Registration Form{% endblock %} {% block page_content %}
     .option-card h3 {
       color: var(--primary-color);
       margin-bottom: 1rem;
+      font-size: 1.3rem;
     }
 
     .option-card h3 i {
@@ -306,6 +308,7 @@ Registration Form{% endblock %} {% block page_content %}
       text-decoration: none;
       border: 2px solid transparent;
       cursor: pointer;
+      text-align: center;
     }
 
     .btn i {
@@ -446,27 +449,87 @@ Registration Form{% endblock %} {% block page_content %}
       width: 20px;
     }
 
-    @media (max-width: 768px) {
+    /* Mobile Responsiveness */
+    @media (max-width: 992px) {
+      .download-wrapper {
+        margin: 2rem auto;
+      }
+
       .download-card {
-        padding: 2rem 1rem;
-        margin: 1rem;
+        padding: 2rem;
       }
 
       .download-title {
         font-size: 2rem;
       }
 
+      .download-icon {
+        font-size: 4rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .company-header {
+        padding: 1.5rem 0;
+      }
+
+      .company-name {
+        font-size: 1.8rem;
+      }
+
+      .company-tagline {
+        font-size: 1rem;
+      }
+
+      .download-wrapper {
+        margin: 1rem auto;
+        padding: 0 0.5rem;
+      }
+
+      .download-card {
+        padding: 1.5rem;
+        border-radius: 10px;
+      }
+
+      .download-title {
+        font-size: 1.8rem;
+      }
+
+      .download-description {
+        font-size: 1.1rem;
+      }
+
+      .download-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+      }
+
       .form-options {
         grid-template-columns: 1fr;
-        gap: 1rem;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .option-card {
+        padding: 1.5rem;
+      }
+
+      .option-card h3 {
+        font-size: 1.2rem;
       }
 
       .instruction-steps {
         grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .instruction-step {
+        padding: 1rem;
       }
 
       .btn {
         width: 100%;
+        justify-content: center;
       }
 
       .contact-details {
@@ -474,8 +537,69 @@ Registration Form{% endblock %} {% block page_content %}
         align-items: center;
       }
 
+      .contact-item {
+        margin: 0.25rem 0;
+        justify-content: center;
+      }
+
+      .instructions {
+        margin: 2rem 0;
+      }
+
+      .required-documents {
+        padding: 1rem;
+        margin: 1.5rem 0;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .download-card {
+        padding: 1rem;
+      }
+
+      .download-title {
+        font-size: 1.5rem;
+      }
+
+      .download-description {
+        font-size: 1rem;
+      }
+
+      .option-card {
+        padding: 1rem;
+      }
+
+      .step-number {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+      }
+
+      .step-content h4 {
+        font-size: 1rem;
+      }
+
+      .step-content p {
+        font-size: 0.9rem;
+      }
+
+      .btn-lg {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 400px) {
       .company-name {
         font-size: 1.5rem;
+      }
+
+      .download-title {
+        font-size: 1.3rem;
+      }
+
+      .download-icon {
+        font-size: 3rem;
       }
     }
   </style>

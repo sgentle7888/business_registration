@@ -866,22 +866,24 @@ class BusinessRegistrationForm {
         const result = await this.submitApplication();
         
         if (result.status === 'success') {
+            // Show success message briefly
             this.showMessage(result.message, 'success');
-            this.downloadPdfBtn.style.display = 'inline-flex';
-            this.currentRegistrationId = result.registration_id;
             
+            // Redirect to success page after a short delay
             setTimeout(() => {
-                this.disableForm();
-            }, 2000);
+                const successUrl = `/success?registration_id=${encodeURIComponent(result.registration_id)}&business_name=${encodeURIComponent(result.registration_name)}`;
+                window.location.href = successUrl;
+            }, 2000); // 2 second delay to show the success message
+            
         } else {
             throw new Error(result.message);
         }
         
     } catch (error) {
         this.showMessage('An error occurred: ' + error.message, 'danger');
-    } finally {
         this.setSubmitButtonState(false, '<i class="fa fa-paper-plane"></i> Submit Application');
     }
+    // Note: Don't reset the button state on success since we're redirecting
 }
 
 submitApplication() {
